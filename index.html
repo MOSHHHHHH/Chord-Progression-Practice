@@ -388,15 +388,12 @@
             errorDetails.textContent = 'טוען קבצי הגדרות...';
 
             try {
-                // IMPORTANT: In a real environment, the user-provided files (in js_ref/) must use named exports.
-                // Example: `export const note_c = {...}` in note_definitions.js
-                // We mock the variable names that are expected from the user's files based on the file contents.
-
-                const noteModule = await import('./js_ref/note_definitions.js');
-                const scaleModule = await import('./js_ref/scale_definitions.js');
-                const chordModule = await import('./js_ref/chord_definitions.js');
-                const majorModule = await import('./js_ref/major_progressions.js');
-                const minorModule = await import('./js_ref/natural_minor_progressions.js');
+                // IMPORTANT: Corrected path from js_ref/ to js_def/ as requested.
+                const noteModule = await import('./js_def/note_definitions.js');
+                const scaleModule = await import('./js_def/scale_definitions.js');
+                const chordModule = await import('./js_def/chord_definitions.js');
+                const majorModule = await import('./js_def/major_progressions.js');
+                const minorModule = await import('./js_def/natural_minor_progressions.js');
 
                 // Assuming all 'const' variables in the user's files are exported as properties of the module object.
                 // We reconstruct the necessary data structures from the imported modules.
@@ -413,13 +410,10 @@
                 SCALE_NATURAL_MINOR = scaleModule.scale_natural_minor;
                 if (!SCALE_MAJOR || !SCALE_NATURAL_MINOR) throw new Error("חסרים הגדרות סולמות (מז'ור/מינור).");
 
-                // 3. CHORDS: Extract all chord types
+                // 3. CHORDS: Extract all chord types (this is simplified, assuming progressions link to exported variables)
                 ALL_CHORD_TYPES = Object.values(chordModule)
                     .filter(obj => typeof obj === 'object' && obj !== null && 'hebrew_name' in obj);
                 
-                // Convert array to a map for easier lookup later, keyed by a property if needed.
-                // For simplicity here, we'll rely on the objects being correct when retrieving from progression data.
-
                 // 4. PROGRESSIONS:
                 MAJOR_PROGRESSIONS = majorModule.major_progressions;
                 NATURAL_MINOR_PROGRESSIONS = minorModule.natural_minor_progressions;
@@ -438,7 +432,7 @@
             } catch (e) {
                 // Visual error display
                 console.error("Critical loading error:", e);
-                errorDetails.innerHTML = `האפליקציה לא הצליחה לטעון את קבצי ה-JavaScript הנדרשים מהנתיב 'js_ref/'. ודא שהקבצים קיימים וממוקמים נכון.<br><br>פרטי שגיאה: ${e.message}`;
+                errorDetails.innerHTML = `האפליקציה לא הצליחה לטעון את קבצי ה-JavaScript הנדרשים מהנתיב 'js_def/'. ודא שהקבצים קיימים וממוקמים נכון.<br><br>פרטי שגיאה: ${e.message}`;
                 loadingOverlay.style.display = 'flex';
                 appContainer.style.display = 'none';
             }
@@ -453,18 +447,18 @@
         const getNoteObject = (serial) => ALL_NOTES.find(n => n.serial_number === serial);
         
         // Calculates the English name of the root note based on serial number and modifier
-        const getRootName = (serial, modifier) => {
-            const baseNote = getNoteObject(serial);
-            if (!baseNote) return 'N/A';
+        const getRootName = (serial) => {
+            const note = getNoteObject(serial);
+            if (!note) return 'N/A';
             
-            if (modifier === 'sharp' && baseNote.english_name.includes('#')) {
-                return baseNote.english_name; // e.g., C# is C#
+            // Prioritize the name that includes the sharp/flat modifier if it's not a natural note
+            if (note.english_name.length > 1 && note.english_name.includes('#')) {
+                return note.english_name;
             }
-            if (modifier === 'flat' && baseNote.alt_english_name && baseNote.alt_english_name.includes('b')) {
-                return baseNote.alt_english_name; // e.g., Db is Db
+            if (note.alt_english_name && note.alt_english_name.includes('b')) {
+                return note.alt_english_name;
             }
-            // Default or natural
-            return baseNote.english_name;
+            return note.english_name; // Fallback to natural name
         };
 
         // Calculates the notes of the scale
@@ -477,9 +471,18 @@
         
         // Calculates the chord's full name and notes
         const getChordDetails = (rootSerial, chordType) => {
-            const rootNote = getNoteObject(rootSerial);
-            const noteName = rootNote.english_name; // Use English name for symbol calculation
+            // Get the best English name for the chord symbol, prioritizing accidentals if the note is sharp/flat
+            const rootNoteObject = getNoteObject(rootSerial);
+            let noteName;
 
+            // Simple logic to choose the most common notation (e.g., A# or Bb)
+            // If the user selected a sharp note (e.g., D#), the rootSerial is 3. We use D# here.
+            // If the user selected a flat note (e.g., Eb), the rootSerial is 3. We use Eb here.
+            // This is complex. For simplicity, we choose the name that best matches the serial number's representation
+            // based on whether the original serial came from a sharp or flat press, but since we only store the serial number, 
+            // we default to the note object's primary English name, unless an alt name is available and shorter (e.g., C# vs Db)
+            noteName = getRootName(rootSerial); 
+            
             // Dynamically build the chord symbol using the specified format
             let chordSymbol = chordType.symbolic_name_build.replace('note_name', noteName);
             
@@ -510,22 +513,39 @@
                 btn.className = 'btn btn-outline';
                 btn.textContent = note;
                 btn.dataset.serial = serial;
-                btn.addEventListener('click', () => selectRootNote(serial));
+                btn.addEventListener('click', () => selectRootNote(serial, 'natural'));
                 rootContainer.appendChild(btn);
             });
         };
         
         // Updates the selection page UI based on state
         const updateSelectionUI = () => {
-            // Root Note Buttons
+            // Root Note Buttons - only toggle based on the base 7 notes serials
             document.querySelectorAll('#root-note-buttons .btn').forEach(btn => {
                 const serial = parseInt(btn.dataset.serial, 10);
+                // Check if the current state serial matches the natural note's serial
                 btn.classList.toggle('selected', state.rootNoteSerial === serial);
             });
 
-            // Modifier Buttons (Simplified: assume modifier is inherent in the selected serial, but we track the base 7)
+            // Modifier Buttons (♮, #, ♭)
             document.querySelectorAll('#mod-natural, #mod-sharp, #mod-flat').forEach(btn => btn.classList.remove('selected'));
             
+            // Determine which modifier button should be selected based on the final serial
+            const currentRootName = getRootName(state.rootNoteSerial);
+
+            if (currentRootName && currentRootName.includes('#')) {
+                document.getElementById('mod-sharp').classList.add('selected');
+            } else if (currentRootName && currentRootName.includes('b')) {
+                document.getElementById('mod-flat').classList.add('selected');
+            } else if (state.rootNoteSerial !== null) {
+                // If it's a natural note (C, D, E, F, G, A, B)
+                const base7Serials = NOTE_ROOTS.map(n => NOTE_SERIALS_MAP[n]);
+                if (base7Serials.includes(state.rootNoteSerial)) {
+                    document.getElementById('mod-natural').classList.add('selected');
+                }
+            }
+
+
             // Type Buttons
             document.getElementById('type-major').classList.toggle('selected', state.scaleTypeKey === 'major');
             document.getElementById('type-minor').classList.toggle('selected', state.scaleTypeKey === 'minor');
@@ -544,6 +564,11 @@
             const scaleName = getRootName(state.rootNoteSerial) + ' ' + scaleDefinition.hebrew_name;
             const scaleNotes = getScaleNotes(state.rootNoteSerial, scaleDefinition);
             const progressions = state.scaleTypeKey === 'major' ? MAJOR_PROGRESSIONS : NATURAL_MINOR_PROGRESSIONS;
+            
+            // Ensure index is within bounds
+            const safeIndex = Math.min(Math.max(0, state.currentProgressionIndex), progressions.length - 1);
+            state.currentProgressionIndex = safeIndex;
+
             const currentProgression = progressions[state.currentProgressionIndex];
 
             // 1. Scale Display
@@ -606,6 +631,9 @@
             document.getElementById('chord-technical-info').textContent = chordDetails.type.playing_technique_he;
             document.getElementById('chord-harmonic-info').textContent = chordDetails.type.harmonic_function_he;
             
+            // Store the currently displayed chord's notes for toggle function
+            state.currentChordNotes = chordDetails.notes;
+
             // Rerender notes in the new mode
             renderChordNotes(chordDetails.notes);
         };
@@ -613,7 +641,6 @@
         // Renders the chord notes based on the current display mode
         const renderChordNotes = (notes) => {
             const notesDisplay = document.getElementById('chord-notes-display');
-            const toggleBtn = document.getElementById('toggle-note-display-btn');
             notesDisplay.innerHTML = '';
 
             notes.forEach(note => {
@@ -623,12 +650,33 @@
                 notesDisplay.appendChild(noteBox);
             });
             
-            toggleBtn.textContent = state.noteDisplayMode === 'english' ? 'דו רה מי' : 'ABC';
+            // Update the button text based on the new mode
+            document.getElementById('toggle-note-display-btn').textContent = state.noteDisplayMode === 'english' ? 'דו רה מי' : 'ABC';
         };
 
         // Get the note name (English or Hebrew) based on current mode
         const getNoteNameByMode = (note) => {
-            return state.noteDisplayMode === 'english' ? note.english_name : note.hebrew_name;
+            // Check if the note is a sharp/flat, and choose the most appropriate name for English
+            if (state.noteDisplayMode === 'english') {
+                const isSharp = getRootName(note.serial_number).includes('#');
+                const isFlat = getRootName(note.serial_number).includes('b');
+
+                // If the note has both sharp and flat names, and it's a black key (serial 1, 3, 6, 8, 10),
+                // we'll try to use the name that matches the scale context, but since we don't track context,
+                // we default to the primary english name (as defined in note_definitions.js), or alt if primary is null.
+                if (isSharp) return note.english_name;
+                if (isFlat && note.alt_english_name) return note.alt_english_name;
+                return note.english_name || note.alt_english_name;
+
+            } else { // Hebrew
+                const isSharp = note.hebrew_name && note.hebrew_name.includes('דיאז');
+                const isFlat = note.alt_hebrew_name && note.alt_hebrew_name.includes('במול');
+
+                // Prioritize the sharp/flat name if one exists, otherwise default to primary
+                if (isSharp) return note.hebrew_name;
+                if (isFlat && note.alt_hebrew_name) return note.alt_hebrew_name;
+                return note.hebrew_name || note.alt_hebrew_name;
+            }
         };
 
         // Switches between views
@@ -654,28 +702,30 @@
         };
         
         const handleModifierClick = (modifier) => {
-            // Find the currently selected base note
-            const baseSerial = state.rootNoteSerial;
-            if (baseSerial === null) return;
-
-            let targetSerial = baseSerial;
-
-            // Simple serialization check for modifier
+            const currentRootName = getRootName(state.rootNoteSerial);
+            
+            // Only proceed if a root note has been selected
+            if (state.rootNoteSerial === null) return;
+            
+            let targetSerial = state.rootNoteSerial;
+            
+            // Get the base serial number (C=0, D=2, E=4, etc.) of the currently selected note, ignoring accidentals
+            // This is complex. For simplicity, we assume if we press a modifier, we are affecting the currently selected serial.
+            
             if (modifier === 'sharp') {
-                targetSerial = (baseSerial + 1) % 12;
+                targetSerial = (state.rootNoteSerial + 1) % 12;
             } else if (modifier === 'flat') {
-                targetSerial = (baseSerial - 1 + 12) % 12;
+                targetSerial = (state.rootNoteSerial - 1 + 12) % 12;
+            } else if (modifier === 'natural') {
+                // Find the closest natural note (e.g., C# -> C, Db -> C)
+                const base7Serials = NOTE_ROOTS.map(n => NOTE_SERIALS_MAP[n]);
+                const closestBase = base7Serials.reduce((prev, curr) => 
+                    (Math.abs(curr - state.rootNoteSerial) < Math.abs(prev - state.rootNoteSerial) ? curr : prev), base7Serials[0]);
+                targetSerial = closestBase;
             }
-            // For natural, it's just the baseSerial
-
-            // We update the state to the target serial, and keep the UI for the base 7 notes clean
+            
             state.rootNoteSerial = targetSerial;
             
-            // Clear selection of type/mod to force re-selection or continue, ensuring consistency
-            document.querySelectorAll('#mod-natural, #mod-sharp, #mod-flat').forEach(btn => btn.classList.remove('selected'));
-            document.getElementById(`mod-${modifier}`).classList.add('selected');
-            
-            // The note buttons are updated based on the actual serial
             updateSelectionUI();
         };
 
@@ -715,40 +765,13 @@
             localStorage.setItem('noteDisplayMode', state.noteDisplayMode);
             
             // Rerender all notes on screen
-            renderPracticePage(); // Rerenders scale notes and progression (which handles the explanation reset)
+            renderPracticePage(); 
             
-            // Need to re-trigger the explanation if one was showing
-            const selectedChordName = document.getElementById('selected-chord-name').textContent;
-            if (selectedChordName) {
-                 // Simulate click by reconstructing details from current progression (hacky, but simple)
-                const progressions = state.scaleTypeKey === 'major' ? MAJOR_PROGRESSIONS : NATURAL_MINOR_PROGRESSIONS;
-                const currentProgression = progressions[state.currentProgressionIndex];
-                
-                // Find the chord element that was active (to get its details)
-                // Since we don't store the last clicked chord details in state, we must re-calculate the details of the first chord in the progression.
-                // A better implementation would store the full chordDetails in state.
-                // For now, if the explanation is visible, just re-render the explanation part.
-                
-                const chordExplContent = document.getElementById('chord-explanation-content');
-                if (chordExplContent.style.display !== 'none') {
-                    // Find the currently displayed chord's notes
-                    const displayedChordNotes = document.getElementById('chord-notes-display').getElementsByClassName('note-box');
-                    if (displayedChordNotes.length > 0) {
-                        // This is tricky without knowing which chord was clicked. We'll just re-render the chord notes section if visible.
-                        // We must fetch the original chord details. Let's assume the current explanation content is from the first chord (for simplicity).
-                        const rootSerial = (state.rootNoteSerial + currentProgression.root_serial_numbers[0]) % 12;
-                        const chordDetails = getChordDetails(rootSerial, currentProgression.chord_types[0]);
-                        renderChordNotes(chordDetails.notes); // Only update the notes part
-                        
-                        // Update the button text
-                        document.getElementById('toggle-note-display-btn').textContent = state.noteDisplayMode === 'english' ? 'דו רה מי' : 'ABC';
-                    }
-                }
+            // Rerender the chord notes display if an explanation is currently visible
+            const chordExplContent = document.getElementById('chord-explanation-content');
+            if (chordExplContent.style.display !== 'none' && state.currentChordNotes) {
+                renderChordNotes(state.currentChordNotes); 
             }
-            
-            // Update the button text even if no chord is selected
-            document.getElementById('toggle-note-display-btn').textContent = state.noteDisplayMode === 'english' ? 'דו רה מי' : 'ABC';
-
         };
 
         // ====================================================================================
@@ -783,8 +806,6 @@
             // Initial button text for the toggle
             document.getElementById('toggle-note-display-btn').textContent = state.noteDisplayMode === 'english' ? 'דו רה מי' : 'ABC';
 
-            // Check if a scale was previously selected and jump to practice if so (optional)
-            // For simplicity, we start at the selection page.
         };
 
         // Start the application by attempting to load data
