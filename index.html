@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>תרגול סולמות ואקורדים</title>
-    <!-- טעינת קבצי ה-JS החיצוניים מתיקיית js_ref כנדרש -->
+    <!-- טעינת קבצי ה-JS החיצוניים מתיקיית js_def כנדרש -->
     <script src="js_def/note_definitions.js"></script>
     <script src="js_def/scale_definitions.js"></script>
     <script src="js_def/chord_definitions.js"></script>
@@ -306,7 +306,7 @@
 </head>
 <body onload="setTimeout(initApp, 100)">
     <div id="error-message">
-        שגיאה בטעינת הקבצים! נא ודא כי קובצי ה-JS בתיקיית 'js_ref' קיימים ונטענו בהצלחה. (האפליקציה דורשת את כל 5 הקבצים).
+        שגיאה בטעינת הקבצים! נא ודא כי קובצי ה-JS בתיקיית 'js_def' קיימים ונטענו בהצלחה. (האפליקציה דורשת את כל 5 הקבצים).
     </div>
 
     <div class="app-container">
@@ -581,11 +581,14 @@
                     document.querySelectorAll('#progression-display .chord-box').forEach(box => {
                         box.style.backgroundColor = 'var(--bg-dark)';
                         box.style.boxShadow = 'var(--shadow-subtle)';
+                        box.style.transform = 'translateY(0)';
                     });
 
                     // סימון האקורד שנבחר
                     chordBox.style.backgroundColor = '#dbeafe'; /* כחול בהיר */
                     chordBox.style.boxShadow = '0 0 10px rgba(59, 130, 246, 0.5)';
+                    chordBox.style.transform = 'scale(1.03)';
+
 
                     const index = parseInt(chordBox.dataset.chordIndex, 10);
                     displayChordExplanation(index);
@@ -633,37 +636,15 @@
             scaleNotesContainer.innerHTML = '';
             const rootIndex = root.serial_number;
 
-            // אם נבחר דיאז או במול, נשתמש בתווים המשתייכים לסולם (למשל, C# Major משתמש בדיאזים)
+            // קביעה אם להשתמש בשמות במול (Db, Eb) או דיאז (C#, D#)
             const useAltNames = appState.selectedModifier === 'flat';
 
             const scaleNotes = type.intervals_semitones.map(interval => {
                 const noteIndex = (rootIndex + interval) % 12;
                 const note = NOTES_MAP.find(n => n.serial_number === noteIndex);
 
-                let noteDisplay = note.english_name;
-                // לוגיקה לבחירת שם התו המתאים לפי ברירת המחדל שבקובץ
-                if (useAltNames && note.alt_english_name) {
-                    noteDisplay = note.alt_english_name;
-                } else if (!useAltNames && note.english_name && note.english_name.length > 1 && note.english_name.endsWith('#')) {
-                    // אם נבחר דיאז, ננסה להשתמש בדיאזים
-                } else if (!useAltNames && note.english_name && note.alt_english_name && note.alt_english_name.endsWith('b')) {
-                    // אם נבחר דיאז, ואין שם עם #, נשתמש בשם הרגיל (לדוגמה C)
-                    // יש לשפר את הלוגיקה אם רוצים שמות אחידים (אבל נשמור על הלוגיקה הפשוטה הנוכחית)
-                }
+                let noteDisplay = getNoteName(note, false, useAltNames);
                 
-                // שיפור קל: אם נבחר במול (flat) ואין שם חלופי (alt_english_name) - נשתמש בשם הראשי
-                if (appState.selectedModifier === 'flat' && note.alt_english_name) {
-                    noteDisplay = note.alt_english_name;
-                } else {
-                    noteDisplay = note.english_name;
-                }
-                
-                // ודא שהתווים האבסולוטיים (C, D, E, F, G, A, B) תמיד מופיעים כראוי
-                if (!note.alt_english_name && note.english_name) {
-                    noteDisplay = note.english_name;
-                }
-
-
                 const div = document.createElement('div');
                 div.className = 'scale-note-box';
                 div.textContent = noteDisplay;
@@ -693,10 +674,7 @@
 
                 // 2. קביעת שם התו לשימוש (דיאז/במול)
                 const useAltNames = appState.selectedModifier === 'flat';
-                let note_name = chordRoot.english_name;
-                if (useAltNames && chordRoot.alt_english_name) {
-                    note_name = chordRoot.alt_english_name;
-                }
+                let note_name = getNoteName(chordRoot, false, useAltNames);
 
                 // 3. בניית שם האקורד
                 // לדוגמה: C + 'm' => Cm
@@ -720,13 +698,23 @@
             document.getElementById('chord-explanation').innerHTML = '<p style="text-align: center; font-style: italic;">לחץ על אקורד כלשהו כדי לראות את הפירוט שלו.</p>';
         }
 
-        function getNoteName(note, useHebrew, useAlt) {
-            if (useHebrew) {
-                return useAlt ? note.alt_hebrew_name || note.hebrew_name : note.hebrew_name;
+        /**
+         * מחזירה את שם התו המתאים לפי השפה והעדפת הדיאז/במול הנוכחית.
+         * @param {Object} note אובייקט התו מה-NOTES_MAP
+         * @param {boolean} useFlatNames האם להשתמש בשמות במול (Db) או דיאז (C#) עבור התווים השחורים.
+         * @returns {string} שם התו
+         */
+        function getNoteName(note, useHebrew, useFlatNames) {
+            // אם במול (flat) נבחר, נשתמש בשם החלופי (alt_english_name או alt_hebrew_name) אם קיים.
+            if (useFlatNames) {
+                if (useHebrew) {
+                    return note.alt_hebrew_name || note.hebrew_name;
+                }
+                return note.alt_english_name || note.english_name;
             }
-            // באנגלית, אם נבחר במול, נשתמש בשם החלופי
-            if (!useHebrew && appState.selectedModifier === 'flat' && note.alt_english_name) {
-                 return note.alt_english_name;
+            // אחרת, נשתמש בשם הראשי (english_name או hebrew_name).
+            if (useHebrew) {
+                return note.hebrew_name;
             }
             return note.english_name;
         }
