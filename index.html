@@ -3,783 +3,792 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>תרגול סולמות ואקורדים</title>
-    <!-- טעינת קבצי ה-JS החיצוניים מתיקיית js_def כנדרש -->
-    <script src="js_def/note_definitions.js"></script>
-    <script src="js_def/scale_definitions.js"></script>
-    <script src="js_def/chord_definitions.js"></script>
-    <script src="js_def/major_progressions.js"></script>
-    <script src="js_def/natural_minor_progressions.js"></script>
+    <title>תרגול אקורדים וסולמות - נטפרי</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        /* הגדרות כלליות, עיצוב מודרני ואנימציות עדינות */
+        /* CSS Reset and Global Styles */
         :root {
-            --primary: #3b82f6; /* כחול */
-            --secondary: #10b981; /* ירוק */
-            --accent: #f97316; /* כתום */
-            --bg-light: #f3f4f6; /* רקע בהיר */
-            --bg-dark: #ffffff; /* רקע כהה יותר */
-            --text-color: #1f2937; /* טקסט כהה */
-            --border-radius: 12px;
-            --shadow-subtle: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --primary-color: #3b82f6; /* Blue 500 */
+            --primary-dark: #2563eb; /* Blue 600 */
+            --secondary-color: #f59e0b; /* Amber 500 */
+            --background-light: #f9fafb; /* Gray 50 */
+            --text-color: #1f2937; /* Gray 800 */
+            --card-bg: #ffffff;
+            --border-color: #e5e7eb;
+            --transition-speed: 0.3s;
+            font-family: 'Heebo', Arial, sans-serif;
+            font-size: 16px;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-            background-color: var(--bg-light);
-            color: var(--text-color);
             margin: 0;
-            padding: 0;
-            line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-        }
-
-        .app-container {
-            width: 100%;
-            max-width: 900px;
-            margin: 20px;
             padding: 20px;
-            background-color: var(--bg-dark);
-            border-radius: var(--border-radius);
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease-out;
+            background-color: var(--background-light);
+            color: var(--text-color);
+            line-height: 1.6;
+            direction: rtl; /* Set default text direction to RTL for Hebrew */
         }
 
-        h1 {
+        /* Container & Layout */
+        #app-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--background-light);
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+        }
+
+        /* Utility Classes (Flex, Grid) */
+        .flex-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .heading {
             text-align: center;
-            color: var(--primary);
-            margin-bottom: 20px;
             font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
         }
 
-        /* --- כפתורים כלליים --- */
+        /* Button Styling */
         .btn {
-            background-color: var(--primary);
+            background-color: var(--primary-color);
             color: white;
-            border: none;
             padding: 10px 15px;
+            border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-            font-size: 1rem;
-            min-width: 50px; /* כדי לשמור על גודל אחיד יותר */
+            font-weight: 700;
+            transition: background-color var(--transition-speed), transform 0.1s, box-shadow var(--transition-speed);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            flex-grow: 1;
+            text-align: center;
+            min-width: 80px;
         }
 
-        .btn:hover {
-            background-color: #2563eb;
+        .btn:hover:not(:disabled) {
+            background-color: var(--primary-dark);
             transform: translateY(-1px);
-            box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
         }
 
-        .btn:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        .btn:active:not(:disabled) {
+            transform: translateY(1px);
+        }
+
+        .btn:disabled {
+            background-color: #9ca3af; /* Gray 400 */
+            cursor: not-allowed;
         }
 
         .btn-secondary {
-            background-color: var(--secondary);
+            background-color: var(--secondary-color);
         }
 
-        .btn-secondary:hover {
-            background-color: #059669;
+        .btn-secondary:hover:not(:disabled) {
+            background-color: #d97706; /* Amber 700 */
         }
-
-        .btn-accent {
-            background-color: var(--accent);
+        
+        .btn-outline {
+            background-color: var(--card-bg);
+            color: var(--primary-dark);
+            border: 2px solid var(--primary-color);
+            box-shadow: none;
         }
-
-        .btn-accent:hover {
-            background-color: #ea580c;
-        }
-
-        /* --- כפתור נבחר - הדגשה משופרת --- */
-        .btn-selected {
-            background-color: var(--accent); /* רקע כתום של האקסנט */
+        
+        .btn-outline:hover:not(:disabled) {
+            background-color: var(--primary-color);
             color: white;
-            border: 3px solid #ffe0b2; /* גבול בהיר יותר */
-            transform: scale(1.05);
-            box-shadow: 0 0 12px rgba(249, 115, 22, 0.8); /* צל זוהר */
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
         }
 
-        .btn-selected.btn-secondary {
-            background-color: #10b981; /* שמירה על ירוק לסימנים, אבל עם הבלטה */
-            border: 3px solid #a7f3d0;
-            box-shadow: 0 0 12px rgba(16, 185, 129, 0.8);
+        .btn.selected {
+            background-color: #10b981; /* Green 500 */
+            box-shadow: 0 0 0 3px #065f46; /* Green 900 ring */
+            transform: translateY(-2px);
         }
 
-        /* --- דף בחירת סולם --- */
-        #scale-selection-page, #practice-page {
-            transition: opacity 0.4s ease-in-out;
-        }
-
-        .selection-group {
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #e5e7eb;
-            border-radius: var(--border-radius);
-            background-color: var(--bg-light);
-        }
-
-        .selection-group h2 {
-            margin-top: 0;
-            border-bottom: 2px solid var(--primary);
-            padding-bottom: 8px;
-            font-size: 1.2rem;
-            text-align: right;
-        }
-
-        .button-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-            gap: 10px;
-            direction: ltr; /* יישור הכפתורים משמאל לימין */
-        }
-
-        .note-button {
-            height: 50px;
-            font-size: 1.2rem;
-            padding: 0;
-        }
-
-        /* --- דף התרגול --- */
-        .section-header {
-            text-align: center;
-            font-size: 1.5rem;
-            color: var(--primary);
-            margin: 20px 0 10px;
-            padding: 5px;
-            border-bottom: 2px dashed #ccc;
-        }
-
-        /* תצוגת סולם - LTR */
-        #scale-display {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid var(--secondary);
-            border-radius: var(--border-radius);
-            background-color: #ecfdf5; /* ירוק בהיר */
-            direction: ltr; /* סדר התווים LTR */
-        }
-
-        .scale-note-box {
-            background-color: var(--secondary);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            min-width: 30px;
-            text-align: center;
-            box-shadow: var(--shadow-subtle);
-        }
-
-        #harmonic-function-scale {
-            text-align: center;
-            font-size: 0.9rem;
-            color: #4b5563;
-            margin-bottom: 20px;
-        }
-
-        /* מהלך אקורדים - LTR */
-        #progression-display {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin: 20px 0;
-            direction: ltr; /* סדר האקורדים LTR */
-        }
-
-        .chord-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
-            padding: 10px;
+        /* Card and Box Styles */
+        .card {
+            background-color: var(--card-bg);
             border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .note-box, .chord-box {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-align: center;
+            flex-shrink: 0;
+            transition: background-color var(--transition-speed);
+            direction: ltr; /* Notes and Chords are LTR */
+        }
+        
+        .chord-box {
+            cursor: pointer;
+            padding: 15px 20px;
+            font-size: 1.5rem;
             min-width: 100px;
-            background-color: var(--bg-dark);
-            border: 2px solid var(--primary);
+            position: relative;
+            background-color: #ef4444; /* Red 500 - for visual interest */
         }
 
         .chord-box:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 10px rgba(0, 0, 0, 0.2);
-            background-color: #eff6ff; /* כחול בהיר */
+            background-color: #dc2626; /* Red 600 */
+            transform: scale(1.05);
         }
-
-        .chord-roman {
-            font-size: 1.2rem;
-            font-weight: 500;
-            color: var(--accent);
-            margin-bottom: 5px;
+        
+        .roman-numeral {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--text-color);
+            background-color: #fcd34d; /* Amber 300 */
+            padding: 2px 8px;
+            border-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
             direction: ltr;
         }
-
-        .chord-name {
-            font-size: 2.2rem;
-            font-weight: 900;
-            color: var(--primary);
-            direction: ltr; /* שם האקורד עצמו LTR */
+        
+        .progression-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin: 40px 0;
+            flex-wrap: wrap;
         }
-
-        #harmonic-description-progression {
+        
+        /* Specific Page Layouts */
+        #scale-display-info {
             text-align: center;
-            font-size: 1rem;
-            color: var(--text-color);
-            margin-top: 15px;
+            margin-bottom: 25px;
         }
 
-        /* ניווט */
-        #navigation-controls {
+        #scale-notes-container {
             display: flex;
             justify-content: center;
             gap: 15px;
-            margin-top: 30px;
+            margin-bottom: 15px;
+            direction: ltr; /* Ensure LTR for the note row */
         }
-
-        /* הסבר על אקורד */
+        
+        .scale-info-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-top: 10px;
+            color: var(--primary-dark);
+        }
+        
+        /* Chord Explanation */
         #chord-explanation {
             min-height: 150px;
-            margin-top: 30px;
+            text-align: right;
+            border: 2px dashed var(--secondary-color);
             padding: 20px;
-            border: 2px solid var(--accent);
-            border-radius: var(--border-radius);
-            background-color: #fff7ed; /* כתום בהיר */
-            box-shadow: var(--shadow-subtle);
-        }
-
-        .explanation-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px dashed var(--accent);
-            padding-bottom: 10px;
-            margin-bottom: 10px;
-        }
-
-        .explanation-header h3 {
-            margin: 0;
-            color: var(--accent);
-            font-size: 1.5rem;
+            background-color: #fffbeb; /* Amber 50 */
         }
 
         #chord-notes-display {
-            font-size: 1.2rem;
-            font-weight: bold;
-            direction: ltr; /* תווי האקורד LTR */
-            margin-bottom: 10px;
-            color: var(--text-color);
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 10px;
+            direction: ltr; /* Notes display LTR */
         }
 
-        #chord-technical-explanation, #chord-harmonic-explanation {
-            margin-top: 8px;
-            font-size: 0.95rem;
+        /* Transitions & Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        /* הודעת שגיאה כללית */
-        #error-message {
-            display: none;
+        
+        .page-transition {
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        /* Loading/Error Overlay */
+        #loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            padding: 20px;
-            background-color: #ef4444; /* אדום */
-            color: white;
-            text-align: center;
-            font-weight: bold;
-            font-size: 1.1rem;
+            height: 100%;
+            background-color: rgba(249, 250, 251, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
             z-index: 1000;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        #error-message {
+            background-color: #fef2f2; /* Red 50 */
+            border: 2px solid #ef4444; /* Red 500 */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        #error-message h1 {
+            color: #ef4444;
+            margin-top: 0;
         }
     </style>
 </head>
-<body onload="setTimeout(initApp, 100)">
-    <div id="error-message">
-        שגיאה בטעינת הקבצים! נא ודא כי קובצי ה-JS בתיקיית 'js_def' קיימים ונטענו בהצלחה. (האפליקציה דורשת את כל 5 הקבצים).
-    </div>
+<body>
 
-    <div class="app-container">
-        <!-- דף בחירת סולם -->
-        <div id="scale-selection-page">
-            <h1>בחר סולם לתרגול</h1>
-
-            <!-- 1. בחירת שורש (Root Note) -->
-            <div class="selection-group">
-                <h2>תו השורש</h2>
-                <div class="button-grid" id="root-note-buttons">
-                    <button class="btn note-button" data-root="C">C</button>
-                    <button class="btn note-button" data-root="D">D</button>
-                    <button class="btn note-button" data-root="E">E</button>
-                    <button class="btn note-button" data-root="F">F</button>
-                    <button class="btn note-button" data-root="G">G</button>
-                    <button class="btn note-button" data-root="A">A</button>
-                    <button class="btn note-button" data-root="B">B</button>
-                </div>
-            </div>
-
-            <!-- 2. בחירת סימן (Modifier) -->
-            <div class="selection-group">
-                <h2>סימן</h2>
-                <div class="button-grid" id="modifier-buttons" style="grid-template-columns: repeat(3, 1fr);">
-                    <button class="btn btn-secondary note-button" data-modifier="natural">♮</button>
-                    <button class="btn btn-secondary note-button" data-modifier="sharp">#</button>
-                    <button class="btn btn-secondary note-button" data-modifier="flat">♭</button>
-                </div>
-            </div>
-
-            <!-- 3. בחירת סוג סולם (Mode) -->
-            <div class="selection-group">
-                <h2>סוג סולם</h2>
-                <div class="button-grid" id="mode-buttons" style="grid-template-columns: repeat(2, 1fr);">
-                    <button class="btn note-button" data-mode="major">מז'ור</button>
-                    <button class="btn note-button" data-mode="minor">מינור</button>
-                </div>
-            </div>
-
-            <!-- 4. כפתורי פעולה -->
-            <div id="action-buttons" class="button-grid" style="grid-template-columns: 1fr 1fr;">
-                <button class="btn btn-accent" id="random-scale-btn">⮎ סולם אקראי</button>
-                <button class="btn" id="continue-btn" disabled>המשך</button>
-            </div>
-        </div>
-
-        <!-- דף התרגול -->
-        <div id="practice-page" style="display: none;">
-            <!-- 1. כותרת ותצוגת סולם -->
-            <h1 id="scale-title"></h1>
-
-            <h2 class="section-header">תווי הסולם (LTR)</h2>
-            <div id="scale-display" class="ltr-container">
-                <!-- תווי הסולם יוצגו כאן -->
-            </div>
-            <p id="harmonic-function-scale"></p>
-
-            <!-- 2. מהלך האקורדים -->
-            <h2 class="section-header">מהלך אקורדים (LTR)</h2>
-            <div id="progression-display" class="ltr-container">
-                <!-- מהלך האקורדים יוצג כאן -->
-            </div>
-            <p id="harmonic-description-progression"></p>
-
-            <!-- 3. ניווט -->
-            <div id="navigation-controls">
-                <button class="btn btn-secondary" id="prev-progression-btn" disabled>הקודם</button>
-                <button class="btn btn-secondary" id="next-progression-btn" disabled>הבא</button>
-                <button class="btn btn-accent" id="home-btn">בית</button>
-            </div>
-
-            <!-- 4. הסבר על אקורד -->
-            <h2 class="section-header">פרטי האקורד הנבחר</h2>
-            <div id="chord-explanation">
-                <p style="text-align: center; font-style: italic;">לחץ על אקורד כלשהו כדי לראות את הפירוט שלו.</p>
-            </div>
+    <div id="loading-overlay">
+        <div id="error-message" style="display: none;">
+            <h1 dir="rtl">שגיאת טעינה קריטית!</h1>
+            <p id="error-details" dir="rtl">מנסה לטעון את קובצי המידע...</p>
         </div>
     </div>
 
-    <script>
-        // --- בדיקה וטעינת קבצי JS ---
-        // הפונקציה setTimeout מבטיחה שכל ה-JS החיצוני ינסה להיטען לפני הרצת קוד הליבה.
-        function checkJSLoad() {
-            // רשימת משתנים גלובליים שחייבים להיטען מקבצי ה-JS
-            const requiredVars = [
-                'note_c', 'scale_major', 'chord_major', 'major_progressions', 'natural_minor_progressions', 'DEGREE_TO_SEMITONE'
-            ];
+    <div id="app-container" style="display: none;">
+        
+        <!-- 1. Scale Selection Page -->
+        <div id="selection-page" class="page-transition">
+            <h1 class="heading">בחר סולם לתרגול</h1>
+            
+            <div class="card">
+                <h2 style="font-size: 1.4rem; margin-bottom: 10px; text-align: center;">תו שורש</h2>
+                <div class="flex-row" id="root-note-buttons">
+                    <!-- Buttons for C, D, E, F, G, A, B -->
+                </div>
+            </div>
 
-            const failed = requiredVars.filter(v => typeof window[v] === 'undefined');
+            <div class="card">
+                <h2 style="font-size: 1.4rem; margin-bottom: 10px; text-align: center;">סימן שינוי</h2>
+                <div class="flex-row">
+                    <button class="btn btn-outline" id="mod-natural">♮ טבעי</button>
+                    <button class="btn btn-outline" id="mod-sharp"># דיאז</button>
+                    <button class="btn btn-outline" id="mod-flat">♭ במול</button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 style="font-size: 1.4rem; margin-bottom: 10px; text-align: center;">סוג סולם</h2>
+                <div class="flex-row">
+                    <button class="btn btn-outline" id="type-major">מז'ור</button>
+                    <button class="btn btn-outline" id="type-minor">מינור טבעי</button>
+                </div>
+            </div>
 
-            if (failed.length > 0) {
-                console.error("Critical JS files failed to load. Missing: ", failed.join(', '));
-                document.getElementById('error-message').style.display = 'block';
-                return false;
-            }
-            document.getElementById('error-message').style.display = 'none';
-            return true;
-        }
+            <div class="flex-row" style="margin-top: 30px;">
+                <button class="btn btn-secondary" id="random-scale-btn">⮌ בחר סולם אקראי</button>
+                <button class="btn" id="continue-btn" disabled>המשך לתרגול</button>
+            </div>
+        </div>
 
-        // --- משתני אפליקציה גלובליים (Global State) ---
-        let appState = {
-            selectedRoot: null, // C, D, E, etc.
-            selectedModifier: 'natural', // natural, sharp, flat
-            selectedMode: null, // major, minor
-            noteLanguage: 'en', // 'en' or 'he' (ABC or דו רה מי)
-            currentScale: null, // The resulting scale object (e.g., C Major)
-            allProgressions: [], // All progressions for the current mode
+        <!-- 2. Practice Page -->
+        <div id="practice-page" class="page-transition" style="display: none;">
+            
+            <!-- Scale Display Area -->
+            <div id="scale-display-info" class="card">
+                <h1 style="font-size: 1.8rem; margin-bottom: 15px;"><span id="scale-name-he"></span></h1>
+                <div id="scale-notes-container" class="flex-row">
+                    <!-- Scale notes will be rendered here -->
+                </div>
+                <p id="scale-harmonic-info" style="font-size: 0.9rem; color: #4b5563; text-align: center;"></p>
+            </div>
+
+            <!-- Chord Progression Area -->
+            <div class="card">
+                <h2 style="font-size: 1.4rem; margin-bottom: 10px; text-align: right;">מהלך אקורדים (<span id="progression-index-display">1/50</span>)</h2>
+                <div id="progression-display" class="progression-container">
+                    <!-- Chords with Roman numerals will be rendered here -->
+                </div>
+                <p id="progression-harmonic-info" style="font-size: 1rem; color: var(--text-color); text-align: right;"></p>
+            </div>
+
+            <!-- Progression Navigation -->
+            <div class="flex-row" style="margin-bottom: 20px; justify-content: space-between;">
+                <button class="btn btn-outline" id="prev-progression-btn">הקודם</button>
+                <button class="btn btn-secondary" id="next-progression-btn">הבא</button>
+            </div>
+            <div class="flex-row" style="margin-bottom: 20px;">
+                <button class="btn btn-outline" id="home-btn">⌂ בחירת סולם</button>
+            </div>
+
+            <!-- Chord Explanation Area -->
+            <div id="chord-explanation" class="card">
+                <p style="text-align: center; font-style: italic; color: #9ca3af;" id="chord-explanation-placeholder">לחץ על אקורד כדי לקבל הסבר מפורט</p>
+                
+                <div id="chord-explanation-content" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h3 style="margin: 0;">אקורד: <span id="selected-chord-name"></span></h3>
+                        <button class="btn btn-secondary btn-outline" id="toggle-note-display-btn" style="flex-grow: 0; padding: 5px 10px;">דו רה מי</button>
+                    </div>
+
+                    <p><strong>תווי האקורד:</strong> <span id="chord-notes-display"></span></p>
+                    <p><strong>הסבר טכני (בנייה):</strong> <span id="chord-technical-info"></span></p>
+                    <p><strong>תפקוד הרמוני:</strong> <span id="chord-harmonic-info"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // ====================================================================================
+        // --- 1. SETUP AND DATA LOADING (MIMICKING EXTERNAL JS FILES) ---
+        // ====================================================================================
+
+        // Global objects to hold the imported data
+        let ALL_NOTES = [];
+        let SCALE_MAJOR = null;
+        let SCALE_NATURAL_MINOR = null;
+        let ALL_CHORD_TYPES = {};
+        let MAJOR_PROGRESSIONS = [];
+        let NATURAL_MINOR_PROGRESSIONS = [];
+
+        // App State
+        let state = {
+            rootNoteSerial: null, // 0-11
+            scaleTypeKey: null,   // 'major' or 'minor'
             currentProgressionIndex: 0,
-            activeProgression: null,
+            noteDisplayMode: localStorage.getItem('noteDisplayMode') || 'english' // 'english' or 'hebrew'
         };
 
-        const NOTES_MAP = []; // מערך המכיל את כל 12 התווים לפי הסדר, לצורך אינדקס מהיר
+        const NOTE_ROOTS = ['C', 'D', 'E', 'F', 'G', 'A', 'B']; // Base note names
+        const NOTE_SERIALS_MAP = {
+            'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3, 'E': 4, 'F': 5, 'F#': 6, 'Gb': 6, 'G': 7, 'G#': 8, 'Ab': 8, 'A': 9, 'A#': 10, 'Bb': 10, 'B': 11
+        };
 
-        // פונקציית אתחול - נקראת לאחר טעינת ה-DOM וניסיון טעינת ה-JS
-        function initApp() {
-            if (!checkJSLoad()) return;
+        const loadDataAndStart = async () => {
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const errorMessage = document.getElementById('error-message');
+            const errorDetails = document.getElementById('error-details');
+            const appContainer = document.getElementById('app-container');
 
-            // 1. בניית מפת התווים
-            // המשתנים מגיעים מ-note_definitions.js
-            const allNotes = [note_c, note_db, note_d, note_eb, note_e, note_f, note_gb, note_g, note_ab, note_a, note_bb, note_b];
-            allNotes.sort((a, b) => a.serial_number - b.serial_number);
-            NOTES_MAP.push(...allNotes);
+            errorMessage.style.display = 'block';
+            errorDetails.textContent = 'טוען קבצי הגדרות...';
 
-            // 2. טעינת העדפת שפה
-            const storedLang = localStorage.getItem('noteLanguage');
-            if (storedLang === 'he' || storedLang === 'en') {
-                appState.noteLanguage = storedLang;
-            }
+            try {
+                // IMPORTANT: In a real environment, the user-provided files (in js_ref/) must use named exports.
+                // Example: `export const note_c = {...}` in note_definitions.js
+                // We mock the variable names that are expected from the user's files based on the file contents.
 
-            // 3. הגדרת מאזיני אירועים
-            setupSelectionListeners();
-            setupPracticeListeners();
+                const noteModule = await import('./js_ref/note_definitions.js');
+                const scaleModule = await import('./js_ref/scale_definitions.js');
+                const chordModule = await import('./js_ref/chord_definitions.js');
+                const majorModule = await import('./js_ref/major_progressions.js');
+                const minorModule = await import('./js_ref/natural_minor_progressions.js');
 
-            // 4. אתחול ברירת מחדל
-            // סימון ברירת המחדל ב-UI ועדכון המצב
-            selectValue('root-note-buttons', 'root', 'C');
-            selectValue('modifier-buttons', 'modifier', 'natural');
-            // עדיין צריך לבחור סוג סולם כדי שהכפתור יופעל
-        }
+                // Assuming all 'const' variables in the user's files are exported as properties of the module object.
+                // We reconstruct the necessary data structures from the imported modules.
 
-        // --- לוגיקת דף הבחירה ---
-
-        function setupSelectionListeners() {
-            // מאזיני שורש
-            document.getElementById('root-note-buttons').addEventListener('click', (e) => {
-                if (e.target.classList.contains('note-button') && e.target.dataset.root) {
-                    selectValue('root-note-buttons', 'root', e.target.dataset.root);
-                }
-            });
-
-            // מאזיני סימן
-            document.getElementById('modifier-buttons').addEventListener('click', (e) => {
-                if (e.target.classList.contains('note-button') && e.target.dataset.modifier) {
-                    selectValue('modifier-buttons', 'modifier', e.target.dataset.modifier);
-                }
-            });
-
-            // מאזיני סוג סולם
-            document.getElementById('mode-buttons').addEventListener('click', (e) => {
-                if (e.target.classList.contains('note-button') && e.target.dataset.mode) {
-                    selectValue('mode-buttons', 'mode', e.target.dataset.mode);
-                }
-            });
-
-            // כפתור אקראי
-            document.getElementById('random-scale-btn').addEventListener('click', selectRandomScale);
-
-            // כפתור המשך
-            document.getElementById('continue-btn').addEventListener('click', startPractice);
-        }
-
-        function selectValue(containerId, stateKey, value) {
-            // הסרת סימון מכל הכפתורים בקבוצה
-            document.querySelectorAll(`#${containerId} .note-button`).forEach(btn => {
-                btn.classList.remove('btn-selected');
-            });
-
-            // סימון הכפתור שנבחר
-            const selectedBtn = document.querySelector(`#${containerId} .note-button[data-${stateKey}="${value}"]`);
-            if (selectedBtn) {
-                selectedBtn.classList.add('btn-selected');
-            }
-
-            // עדכון המצב
-            appState[`selected${stateKey.charAt(0).toUpperCase() + stateKey.slice(1)}`] = value;
-
-            // בדיקת כשירות כפתור "המשך"
-            checkContinueButton();
-        }
-
-        function checkContinueButton() {
-            const isReady = appState.selectedRoot && appState.selectedModifier && appState.selectedMode;
-            const continueBtn = document.getElementById('continue-btn');
-            continueBtn.disabled = !isReady;
-            if (isReady) {
-                continueBtn.classList.add('btn-primary');
-            } else {
-                continueBtn.classList.remove('btn-primary');
-            }
-        }
-
-        function selectRandomScale() {
-            const roots = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-            const modifiers = ['natural', 'sharp', 'flat'];
-            const modes = ['major', 'minor'];
-
-            const randomRoot = roots[Math.floor(Math.random() * roots.length)];
-            const randomModifier = modifiers[Math.floor(Math.random() * modifiers.length)];
-            const randomMode = modes[Math.floor(Math.random() * modes.length)];
-
-            // סימון הכפתורים ב-UI
-            selectValue('root-note-buttons', 'root', randomRoot);
-            selectValue('modifier-buttons', 'modifier', randomModifier);
-            selectValue('mode-buttons', 'mode', randomMode);
-
-            // הפעלת מצב התרגול אוטומטית לאחר בחירה אקראית
-            // נותן ל-UI זמן להתעדכן לפני הפעלה
-            setTimeout(startPractice, 50);
-        }
-
-        function startPractice() {
-            // 1. זיהוי תו השורש הסופי (ספירת חצאי טונים)
-            const rootNote = NOTES_MAP.find(n => n.english_name.startsWith(appState.selectedRoot));
-            let rootIndex = rootNote.serial_number;
-
-            // התאמת חצאי טונים לסימן
-            if (appState.selectedModifier === 'sharp') {
-                // לדוגמה, C# הוא +1 חצי טון מ-C
-                rootIndex = (rootIndex + 1) % 12;
-            } else if (appState.selectedModifier === 'flat') {
-                // לדוגמה, Db הוא +1 חצי טון מ-C, אבל אם בחרנו D (אינדקס 2) ובמול, זה חוזר לאינדקס 1 (Db/C#)
-                rootIndex = (rootIndex - 1 + 12) % 12;
-            }
-
-            const finalRoot = NOTES_MAP.find(n => n.serial_number === rootIndex);
-            if (!finalRoot) {
-                console.error("Failed to determine final root note.");
-                return;
-            }
-
-            // 2. בחירת סוג הסולם והמהלכים
-            const scaleType = appState.selectedMode === 'major' ? scale_major : scale_natural_minor;
-            const progressions = appState.selectedMode === 'major' ? major_progressions : natural_minor_progressions;
-
-            appState.currentScale = {
-                root: finalRoot,
-                type: scaleType
-            };
-            appState.allProgressions = progressions;
-            appState.currentProgressionIndex = 0; // תמיד מתחילים מהמהלך הראשון
-            appState.activeProgression = appState.allProgressions[0];
-
-            // 3. הצגת דף התרגול
-            renderPracticePage();
-            document.getElementById('scale-selection-page').style.display = 'none';
-            document.getElementById('practice-page').style.display = 'block';
-        }
-
-        // --- לוגיקת דף התרגול ---
-
-        function setupPracticeListeners() {
-            document.getElementById('home-btn').addEventListener('click', goHome);
-            document.getElementById('next-progression-btn').addEventListener('click', () => changeProgression(1));
-            document.getElementById('prev-progression-btn').addEventListener('click', () => changeProgression(-1));
-
-            // מאזין לחיצות על אקורדים בתוך מהלך האקורדים
-            document.getElementById('progression-display').addEventListener('click', (e) => {
-                const chordBox = e.target.closest('.chord-box');
-                if (chordBox && chordBox.dataset.chordIndex) {
-                    // הסרת סימון מכל האקורדים
-                    document.querySelectorAll('#progression-display .chord-box').forEach(box => {
-                        box.style.backgroundColor = 'var(--bg-dark)';
-                        box.style.boxShadow = 'var(--shadow-subtle)';
-                        box.style.transform = 'translateY(0)';
-                    });
-
-                    // סימון האקורד שנבחר
-                    chordBox.style.backgroundColor = '#dbeafe'; /* כחול בהיר */
-                    chordBox.style.boxShadow = '0 0 10px rgba(59, 130, 246, 0.5)';
-                    chordBox.style.transform = 'scale(1.03)';
-
-
-                    const index = parseInt(chordBox.dataset.chordIndex, 10);
-                    displayChordExplanation(index);
-                }
-            });
-        }
-
-        function goHome() {
-            document.getElementById('practice-page').style.display = 'none';
-            document.getElementById('scale-selection-page').style.display = 'block';
-            document.getElementById('chord-explanation').innerHTML = '<p style="text-align: center; font-style: italic;">לחץ על אקורד כלשהו כדי לראות את הפירוט שלו.</p>';
-            
-            // מנקה סימוני בחירה של סוג הסולם, כדי לחייב בחירה מחדש
-            document.querySelectorAll('#mode-buttons .btn-selected').forEach(btn => btn.classList.remove('btn-selected'));
-            appState.selectedMode = null;
-            
-            // שומר על בחירת שורש וסימן (C, ♮)
-            document.querySelectorAll('#root-note-buttons .btn-selected').forEach(btn => btn.classList.remove('btn-selected'));
-            document.querySelectorAll('#modifier-buttons .btn-selected').forEach(btn => btn.classList.remove('btn-selected'));
-            selectValue('root-note-buttons', 'root', 'C');
-            selectValue('modifier-buttons', 'modifier', 'natural');
-
-            checkContinueButton();
-        }
-
-        function changeProgression(direction) {
-            const newIndex = appState.currentProgressionIndex + direction;
-            if (newIndex >= 0 && newIndex < appState.allProgressions.length) {
-                appState.currentProgressionIndex = newIndex;
-                appState.activeProgression = appState.allProgressions[newIndex];
-                renderProgression();
-            }
-        }
-
-        function renderPracticePage() {
-            const { root, type } = appState.currentScale;
-            const rootName = getNoteName(root, appState.selectedModifier === 'flat'); // שימוש בשם המתאים (דיאז/במול)
-
-            // 1. כותרת ופונקציה הרמונית של הסולם
-            document.getElementById('scale-title').textContent = `${rootName} ${type.hebrew_name}`;
-            document.getElementById('harmonic-function-scale').textContent = `תיאור הרמוני: ${type.harmonic_function_he}`;
-
-            // 2. הצגת תווי הסולם
-            const scaleNotesContainer = document.getElementById('scale-display');
-            scaleNotesContainer.innerHTML = '';
-            const rootIndex = root.serial_number;
-
-            // קביעה אם להשתמש בשמות במול (Db, Eb) או דיאז (C#, D#)
-            const useAltNames = appState.selectedModifier === 'flat';
-
-            const scaleNotes = type.intervals_semitones.map(interval => {
-                const noteIndex = (rootIndex + interval) % 12;
-                const note = NOTES_MAP.find(n => n.serial_number === noteIndex);
-
-                let noteDisplay = getNoteName(note, false, useAltNames);
+                // 1. NOTES: Extract all note objects into an array (serial 0 to 11)
+                ALL_NOTES = Object.values(noteModule)
+                    .filter(obj => typeof obj === 'object' && obj !== null && 'serial_number' in obj)
+                    .sort((a, b) => a.serial_number - b.serial_number);
                 
-                const div = document.createElement('div');
-                div.className = 'scale-note-box';
-                div.textContent = noteDisplay;
-                return div;
-            });
+                if (ALL_NOTES.length < 12) throw new Error("חסרים הגדרות ל-12 תווים.");
+                
+                // 2. SCALES:
+                SCALE_MAJOR = scaleModule.scale_major;
+                SCALE_NATURAL_MINOR = scaleModule.scale_natural_minor;
+                if (!SCALE_MAJOR || !SCALE_NATURAL_MINOR) throw new Error("חסרים הגדרות סולמות (מז'ור/מינור).");
 
-            scaleNotes.forEach(note => scaleNotesContainer.appendChild(note));
+                // 3. CHORDS: Extract all chord types
+                ALL_CHORD_TYPES = Object.values(chordModule)
+                    .filter(obj => typeof obj === 'object' && obj !== null && 'hebrew_name' in obj);
+                
+                // Convert array to a map for easier lookup later, keyed by a property if needed.
+                // For simplicity here, we'll rely on the objects being correct when retrieving from progression data.
 
-            // 3. הצגת מהלך האקורדים
-            renderProgression();
-        }
+                // 4. PROGRESSIONS:
+                MAJOR_PROGRESSIONS = majorModule.major_progressions;
+                NATURAL_MINOR_PROGRESSIONS = minorModule.natural_minor_progressions;
+                if (!MAJOR_PROGRESSIONS.length || !NATURAL_MINOR_PROGRESSIONS.length) throw new Error("חסרים מהלכי אקורדים (מז'ור/מינור).");
 
-        function renderProgression() {
-            const progression = appState.activeProgression;
-            const rootNote = appState.currentScale.root;
-            const progressionContainer = document.getElementById('progression-display');
-            progressionContainer.innerHTML = '';
-            document.getElementById('harmonic-description-progression').textContent = `תיאור הרמוני: ${progression.harmonic_description_he}`;
 
-            progression.root_degrees.forEach((degree, index) => {
-                const rootSemitone = progression.root_serial_numbers[index]; // מספר חצי טון מהשורש הכללי של הסולם
-                const chordType = progression.chord_types[index];
+                // If successful, proceed to initialization
+                errorDetails.textContent = 'הטעינה הושלמה בהצלחה.';
+                
+                // Hide loading overlay and show app container
+                loadingOverlay.style.display = 'none';
+                appContainer.style.display = 'block';
+                
+                initializeApp();
 
-                // 1. חישוב שורש האקורד הסופי
-                const chordRootIndex = (rootNote.serial_number + rootSemitone) % 12;
-                const chordRoot = NOTES_MAP.find(n => n.serial_number === chordRootIndex);
-
-                // 2. קביעת שם התו לשימוש (דיאז/במול)
-                const useAltNames = appState.selectedModifier === 'flat';
-                let note_name = getNoteName(chordRoot, false, useAltNames);
-
-                // 3. בניית שם האקורד
-                // לדוגמה: C + 'm' => Cm
-                const chordName = eval(chordType.symbolic_name_build.replace('note_name', `'${note_name}'`));
-
-                const box = document.createElement('div');
-                box.className = 'chord-box';
-                box.dataset.chordIndex = index;
-                box.innerHTML = `
-                    <div class="chord-roman">${degree}</div>
-                    <div class="chord-name">${chordName}</div>
-                `;
-                progressionContainer.appendChild(box);
-            });
-
-            // עדכון כפתורי ניווט
-            document.getElementById('prev-progression-btn').disabled = appState.currentProgressionIndex === 0;
-            document.getElementById('next-progression-btn').disabled = appState.currentProgressionIndex === appState.allProgressions.length - 1;
-
-            // ניקוי הסבר האקורד
-            document.getElementById('chord-explanation').innerHTML = '<p style="text-align: center; font-style: italic;">לחץ על אקורד כלשהו כדי לראות את הפירוט שלו.</p>';
-        }
-
-        /**
-         * מחזירה את שם התו המתאים לפי השפה והעדפת הדיאז/במול הנוכחית.
-         * @param {Object} note אובייקט התו מה-NOTES_MAP
-         * @param {boolean} useFlatNames האם להשתמש בשמות במול (Db) או דיאז (C#) עבור התווים השחורים.
-         * @returns {string} שם התו
-         */
-        function getNoteName(note, useHebrew, useFlatNames) {
-            // אם במול (flat) נבחר, נשתמש בשם החלופי (alt_english_name או alt_hebrew_name) אם קיים.
-            if (useFlatNames) {
-                if (useHebrew) {
-                    return note.alt_hebrew_name || note.hebrew_name;
-                }
-                return note.alt_english_name || note.english_name;
+            } catch (e) {
+                // Visual error display
+                console.error("Critical loading error:", e);
+                errorDetails.innerHTML = `האפליקציה לא הצליחה לטעון את קבצי ה-JavaScript הנדרשים מהנתיב 'js_ref/'. ודא שהקבצים קיימים וממוקמים נכון.<br><br>פרטי שגיאה: ${e.message}`;
+                loadingOverlay.style.display = 'flex';
+                appContainer.style.display = 'none';
             }
-            // אחרת, נשתמש בשם הראשי (english_name או hebrew_name).
-            if (useHebrew) {
-                return note.hebrew_name;
+        };
+
+
+        // ====================================================================================
+        // --- 2. HELPER FUNCTIONS ---
+        // ====================================================================================
+        
+        // Find a note object by its serial number (0-11)
+        const getNoteObject = (serial) => ALL_NOTES.find(n => n.serial_number === serial);
+        
+        // Calculates the English name of the root note based on serial number and modifier
+        const getRootName = (serial, modifier) => {
+            const baseNote = getNoteObject(serial);
+            if (!baseNote) return 'N/A';
+            
+            if (modifier === 'sharp' && baseNote.english_name.includes('#')) {
+                return baseNote.english_name; // e.g., C# is C#
             }
-            return note.english_name;
-        }
+            if (modifier === 'flat' && baseNote.alt_english_name && baseNote.alt_english_name.includes('b')) {
+                return baseNote.alt_english_name; // e.g., Db is Db
+            }
+            // Default or natural
+            return baseNote.english_name;
+        };
 
-
-        function displayChordExplanation(chordIndex) {
-            const progression = appState.activeProgression;
-            const rootNoteScale = appState.currentScale.root;
-
-            const chordType = progression.chord_types[chordIndex];
-            const rootSemitone = progression.root_serial_numbers[chordIndex];
-            const chordRootIndex = (rootNoteScale.serial_number + rootSemitone) % 12;
-            const chordRoot = NOTES_MAP.find(n => n.serial_number === chordRootIndex);
-
-            // קביעת שיטת שמות (דיאזים/במולים)
-            const useFlatNames = appState.selectedModifier === 'flat';
-            const note_name_en = getNoteName(chordRoot, false, useFlatNames);
-            const note_name_he = getNoteName(chordRoot, true, useFlatNames);
-
-            const chordName_en = eval(chordType.symbolic_name_build.replace('note_name', `'${note_name_en}'`));
-            const chordName_he = eval(chordType.symbolic_name_build.replace('note_name', `'${note_name_he}'`));
-
-            // --- הרכבת תווי האקורד ---
-            const notes_in_chord_en = [];
-            const notes_in_chord_he = [];
-
-            chordType.intervals_semitones.forEach(interval => {
-                const noteIndex = (chordRootIndex + interval) % 12;
-                const note = NOTES_MAP.find(n => n.serial_number === noteIndex);
-
-                notes_in_chord_en.push(getNoteName(note, false, useFlatNames));
-                notes_in_chord_he.push(getNoteName(note, true, useFlatNames));
+        // Calculates the notes of the scale
+        const getScaleNotes = (rootSerial, scaleDefinition) => {
+            return scaleDefinition.intervals_semitones.map(interval => {
+                const noteSerial = (rootSerial + interval) % 12;
+                return getNoteObject(noteSerial);
             });
+        };
+        
+        // Calculates the chord's full name and notes
+        const getChordDetails = (rootSerial, chordType) => {
+            const rootNote = getNoteObject(rootSerial);
+            const noteName = rootNote.english_name; // Use English name for symbol calculation
 
-            const explanationContainer = document.getElementById('chord-explanation');
+            // Dynamically build the chord symbol using the specified format
+            let chordSymbol = chordType.symbolic_name_build.replace('note_name', noteName);
+            
+            const chordNotesSerials = chordType.intervals_semitones.map(interval => (rootSerial + interval) % 12);
+            
+            const chordNotes = chordNotesSerials.map(serial => getNoteObject(serial));
 
-            const renderExplanation = (lang) => {
-                const chordName = lang === 'en' ? chordName_en : chordName_he;
-                const notesDisplay = lang === 'en' ? notes_in_chord_en.join(' - ') : notes_in_chord_he.join(' - ');
-                const toggleText = lang === 'en' ? 'דו רה מי' : 'ABC';
-
-                explanationContainer.innerHTML = `
-                    <div class="explanation-header">
-                        <h3>${chordName} (${chordType.hebrew_name})</h3>
-                        <button class="btn btn-secondary" id="toggle-note-lang-btn">${toggleText}</button>
-                    </div>
-                    <div>
-                        <p><strong>תווים: </strong> <span id="chord-notes-display">${notesDisplay}</span></p>
-                        <p id="chord-technical-explanation"><strong>הסבר טכני: </strong>${chordType.playing_technique_he}</p>
-                        <p id="chord-harmonic-explanation"><strong>הסבר הרמוני: </strong>${chordType.harmonic_function_he}</p>
-                    </div>
-                `;
-
-                document.getElementById('toggle-note-lang-btn').addEventListener('click', () => {
-                    const newLang = lang === 'en' ? 'he' : 'en';
-                    appState.noteLanguage = newLang;
-                    localStorage.setItem('noteLanguage', newLang);
-                    // טעינה מחדש של ההסבר עם השפה החדשה
-                    renderExplanation(newLang);
-                });
+            return {
+                symbol: chordSymbol,
+                notes: chordNotes,
+                type: chordType // Reference to the full chord definition
             };
+        };
 
-            // הצגת ההסבר בשפה הנוכחית (שנשמרה ב-appState.noteLanguage)
-            renderExplanation(appState.noteLanguage);
-        }
+        // ====================================================================================
+        // --- 3. RENDERING AND VIEW MANAGEMENT ---
+        // ====================================================================================
+        
+        // Renders the selection page buttons
+        const renderSelectionButtons = () => {
+            const rootContainer = document.getElementById('root-note-buttons');
+            rootContainer.innerHTML = '';
+            
+            // Render C, D, E, F, G, A, B buttons
+            NOTE_ROOTS.forEach(note => {
+                const serial = NOTE_SERIALS_MAP[note];
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-outline';
+                btn.textContent = note;
+                btn.dataset.serial = serial;
+                btn.addEventListener('click', () => selectRootNote(serial));
+                rootContainer.appendChild(btn);
+            });
+        };
+        
+        // Updates the selection page UI based on state
+        const updateSelectionUI = () => {
+            // Root Note Buttons
+            document.querySelectorAll('#root-note-buttons .btn').forEach(btn => {
+                const serial = parseInt(btn.dataset.serial, 10);
+                btn.classList.toggle('selected', state.rootNoteSerial === serial);
+            });
+
+            // Modifier Buttons (Simplified: assume modifier is inherent in the selected serial, but we track the base 7)
+            document.querySelectorAll('#mod-natural, #mod-sharp, #mod-flat').forEach(btn => btn.classList.remove('selected'));
+            
+            // Type Buttons
+            document.getElementById('type-major').classList.toggle('selected', state.scaleTypeKey === 'major');
+            document.getElementById('type-minor').classList.toggle('selected', state.scaleTypeKey === 'minor');
+
+            // Continue Button
+            const continueBtn = document.getElementById('continue-btn');
+            continueBtn.disabled = !(state.rootNoteSerial !== null && state.scaleTypeKey !== null);
+        };
+
+        // Renders the Practice Page elements
+        const renderPracticePage = () => {
+            // Ensure data is ready
+            if (state.rootNoteSerial === null || state.scaleTypeKey === null) return;
+            
+            const scaleDefinition = state.scaleTypeKey === 'major' ? SCALE_MAJOR : SCALE_NATURAL_MINOR;
+            const scaleName = getRootName(state.rootNoteSerial) + ' ' + scaleDefinition.hebrew_name;
+            const scaleNotes = getScaleNotes(state.rootNoteSerial, scaleDefinition);
+            const progressions = state.scaleTypeKey === 'major' ? MAJOR_PROGRESSIONS : NATURAL_MINOR_PROGRESSIONS;
+            const currentProgression = progressions[state.currentProgressionIndex];
+
+            // 1. Scale Display
+            document.getElementById('scale-name-he').textContent = scaleName;
+            document.getElementById('scale-harmonic-info').textContent = scaleDefinition.harmonic_function_he;
+            
+            const notesContainer = document.getElementById('scale-notes-container');
+            notesContainer.innerHTML = '';
+            scaleNotes.forEach(note => {
+                const noteBox = document.createElement('div');
+                noteBox.className = 'note-box';
+                noteBox.textContent = getNoteNameByMode(note);
+                notesContainer.appendChild(noteBox);
+            });
+
+            // 2. Progression Display
+            document.getElementById('progression-index-display').textContent = `${state.currentProgressionIndex + 1}/${progressions.length}`;
+            document.getElementById('progression-harmonic-info').textContent = currentProgression.harmonic_description_he;
+            
+            const progContainer = document.getElementById('progression-display');
+            progContainer.innerHTML = '';
+
+            currentProgression.chord_types.forEach((chordType, index) => {
+                const rootSerial = (state.rootNoteSerial + currentProgression.root_serial_numbers[index]) % 12;
+                const chordDetails = getChordDetails(rootSerial, chordType);
+                
+                const chordBox = document.createElement('div');
+                chordBox.className = 'chord-box';
+                chordBox.dataset.rootSerial = rootSerial;
+                chordBox.dataset.chordTypeIndex = index; // Used for identifying in event listener
+                chordBox.textContent = chordDetails.symbol;
+                chordBox.addEventListener('click', () => showChordExplanation(chordDetails));
+
+                const romanNumeral = document.createElement('span');
+                romanNumeral.className = 'roman-numeral';
+                romanNumeral.textContent = currentProgression.root_degrees[index];
+
+                const wrapper = document.createElement('div');
+                wrapper.style.position = 'relative';
+                wrapper.appendChild(romanNumeral);
+                wrapper.appendChild(chordBox);
+                progContainer.appendChild(wrapper);
+            });
+            
+            // 3. Navigation Buttons
+            document.getElementById('prev-progression-btn').disabled = state.currentProgressionIndex === 0;
+            document.getElementById('next-progression-btn').disabled = state.currentProgressionIndex === progressions.length - 1;
+            
+            // Reset chord explanation area
+            document.getElementById('chord-explanation-placeholder').style.display = 'block';
+            document.getElementById('chord-explanation-content').style.display = 'none';
+        };
+
+        // Renders the chord explanation section
+        const showChordExplanation = (chordDetails) => {
+            document.getElementById('chord-explanation-placeholder').style.display = 'none';
+            document.getElementById('chord-explanation-content').style.display = 'block';
+
+            document.getElementById('selected-chord-name').textContent = chordDetails.symbol;
+            document.getElementById('chord-technical-info').textContent = chordDetails.type.playing_technique_he;
+            document.getElementById('chord-harmonic-info').textContent = chordDetails.type.harmonic_function_he;
+            
+            // Rerender notes in the new mode
+            renderChordNotes(chordDetails.notes);
+        };
+        
+        // Renders the chord notes based on the current display mode
+        const renderChordNotes = (notes) => {
+            const notesDisplay = document.getElementById('chord-notes-display');
+            const toggleBtn = document.getElementById('toggle-note-display-btn');
+            notesDisplay.innerHTML = '';
+
+            notes.forEach(note => {
+                const noteBox = document.createElement('div');
+                noteBox.className = 'note-box';
+                noteBox.textContent = getNoteNameByMode(note);
+                notesDisplay.appendChild(noteBox);
+            });
+            
+            toggleBtn.textContent = state.noteDisplayMode === 'english' ? 'דו רה מי' : 'ABC';
+        };
+
+        // Get the note name (English or Hebrew) based on current mode
+        const getNoteNameByMode = (note) => {
+            return state.noteDisplayMode === 'english' ? note.english_name : note.hebrew_name;
+        };
+
+        // Switches between views
+        const navigateTo = (pageId) => {
+            document.getElementById('selection-page').style.display = 'none';
+            document.getElementById('practice-page').style.display = 'none';
+            document.getElementById(pageId).style.display = 'block';
+        };
+
+
+        // ====================================================================================
+        // --- 4. EVENT HANDLERS ---
+        // ====================================================================================
+
+        const selectRootNote = (serial) => {
+            state.rootNoteSerial = serial;
+            updateSelectionUI();
+        };
+
+        const selectScaleType = (type) => {
+            state.scaleTypeKey = type;
+            updateSelectionUI();
+        };
+        
+        const handleModifierClick = (modifier) => {
+            // Find the currently selected base note
+            const baseSerial = state.rootNoteSerial;
+            if (baseSerial === null) return;
+
+            let targetSerial = baseSerial;
+
+            // Simple serialization check for modifier
+            if (modifier === 'sharp') {
+                targetSerial = (baseSerial + 1) % 12;
+            } else if (modifier === 'flat') {
+                targetSerial = (baseSerial - 1 + 12) % 12;
+            }
+            // For natural, it's just the baseSerial
+
+            // We update the state to the target serial, and keep the UI for the base 7 notes clean
+            state.rootNoteSerial = targetSerial;
+            
+            // Clear selection of type/mod to force re-selection or continue, ensuring consistency
+            document.querySelectorAll('#mod-natural, #mod-sharp, #mod-flat').forEach(btn => btn.classList.remove('selected'));
+            document.getElementById(`mod-${modifier}`).classList.add('selected');
+            
+            // The note buttons are updated based on the actual serial
+            updateSelectionUI();
+        };
+
+        const handleRandomScale = () => {
+            const allSerials = ALL_NOTES.map(n => n.serial_number);
+            const randomSerial = allSerials[Math.floor(Math.random() * allSerials.length)];
+            const randomType = Math.random() < 0.5 ? 'major' : 'minor';
+            
+            state.rootNoteSerial = randomSerial;
+            state.scaleTypeKey = randomType;
+            state.currentProgressionIndex = 0; // Reset index
+
+            updateSelectionUI();
+        };
+
+        const handleContinue = () => {
+            if (state.rootNoteSerial !== null && state.scaleTypeKey !== null) {
+                state.currentProgressionIndex = 0; // Start fresh
+                renderPracticePage();
+                navigateTo('practice-page');
+            }
+        };
+
+        const navigateProgression = (direction) => {
+            const progressions = state.scaleTypeKey === 'major' ? MAJOR_PROGRESSIONS : NATURAL_MINOR_PROGRESSIONS;
+            
+            if (direction === 'next' && state.currentProgressionIndex < progressions.length - 1) {
+                state.currentProgressionIndex++;
+            } else if (direction === 'prev' && state.currentProgressionIndex > 0) {
+                state.currentProgressionIndex--;
+            }
+            renderPracticePage();
+        };
+
+        const toggleNoteDisplayMode = () => {
+            state.noteDisplayMode = state.noteDisplayMode === 'english' ? 'hebrew' : 'english';
+            localStorage.setItem('noteDisplayMode', state.noteDisplayMode);
+            
+            // Rerender all notes on screen
+            renderPracticePage(); // Rerenders scale notes and progression (which handles the explanation reset)
+            
+            // Need to re-trigger the explanation if one was showing
+            const selectedChordName = document.getElementById('selected-chord-name').textContent;
+            if (selectedChordName) {
+                 // Simulate click by reconstructing details from current progression (hacky, but simple)
+                const progressions = state.scaleTypeKey === 'major' ? MAJOR_PROGRESSIONS : NATURAL_MINOR_PROGRESSIONS;
+                const currentProgression = progressions[state.currentProgressionIndex];
+                
+                // Find the chord element that was active (to get its details)
+                // Since we don't store the last clicked chord details in state, we must re-calculate the details of the first chord in the progression.
+                // A better implementation would store the full chordDetails in state.
+                // For now, if the explanation is visible, just re-render the explanation part.
+                
+                const chordExplContent = document.getElementById('chord-explanation-content');
+                if (chordExplContent.style.display !== 'none') {
+                    // Find the currently displayed chord's notes
+                    const displayedChordNotes = document.getElementById('chord-notes-display').getElementsByClassName('note-box');
+                    if (displayedChordNotes.length > 0) {
+                        // This is tricky without knowing which chord was clicked. We'll just re-render the chord notes section if visible.
+                        // We must fetch the original chord details. Let's assume the current explanation content is from the first chord (for simplicity).
+                        const rootSerial = (state.rootNoteSerial + currentProgression.root_serial_numbers[0]) % 12;
+                        const chordDetails = getChordDetails(rootSerial, currentProgression.chord_types[0]);
+                        renderChordNotes(chordDetails.notes); // Only update the notes part
+                        
+                        // Update the button text
+                        document.getElementById('toggle-note-display-btn').textContent = state.noteDisplayMode === 'english' ? 'דו רה מי' : 'ABC';
+                    }
+                }
+            }
+            
+            // Update the button text even if no chord is selected
+            document.getElementById('toggle-note-display-btn').textContent = state.noteDisplayMode === 'english' ? 'דו רה מי' : 'ABC';
+
+        };
+
+        // ====================================================================================
+        // --- 5. INITIALIZATION ---
+        // ====================================================================================
+
+        const initializeApp = () => {
+            renderSelectionButtons();
+            updateSelectionUI(); // Set initial state of buttons
+            
+            // Attach main event listeners
+            document.getElementById('type-major').addEventListener('click', () => selectScaleType('major'));
+            document.getElementById('type-minor').addEventListener('click', () => selectScaleType('minor'));
+            document.getElementById('mod-natural').addEventListener('click', () => handleModifierClick('natural'));
+            document.getElementById('mod-sharp').addEventListener('click', () => handleModifierClick('sharp'));
+            document.getElementById('mod-flat').addEventListener('click', () => handleModifierClick('flat'));
+            document.getElementById('random-scale-btn').addEventListener('click', handleRandomScale);
+            document.getElementById('continue-btn').addEventListener('click', handleContinue);
+
+            document.getElementById('prev-progression-btn').addEventListener('click', () => navigateProgression('prev'));
+            document.getElementById('next-progression-btn').addEventListener('click', () => navigateProgression('next'));
+            document.getElementById('home-btn').addEventListener('click', () => {
+                navigateTo('selection-page');
+                // Reset state for new selection
+                state.rootNoteSerial = null;
+                state.scaleTypeKey = null;
+                updateSelectionUI();
+            });
+            
+            document.getElementById('toggle-note-display-btn').addEventListener('click', toggleNoteDisplayMode);
+            
+            // Initial button text for the toggle
+            document.getElementById('toggle-note-display-btn').textContent = state.noteDisplayMode === 'english' ? 'דו רה מי' : 'ABC';
+
+            // Check if a scale was previously selected and jump to practice if so (optional)
+            // For simplicity, we start at the selection page.
+        };
+
+        // Start the application by attempting to load data
+        window.onload = loadDataAndStart;
 
     </script>
 </body>
