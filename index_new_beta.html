@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>תרגול תאוריה מוזיקלית</title>
-    <!-- הוספת פונט Heebo גלובלי לשיפור המראה העברי -->
+        <!-- הוספת פונט Heebo גלובלי לשיפור המראה העברי -->
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         /* איפוס ועיצוב בסיסי */
@@ -287,6 +287,72 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* === תוספת CSS חדשה: עיצוב מתג (Toggle Switch) === */
+        .toggle-switch-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .toggle-switch-label {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+        /* === סוף תוספת CSS === */
+
     </style>
 </head>
 <body>
@@ -294,7 +360,6 @@
     <div class="app-container">
         <h1>תרגול הרמוני</h1>
         
-        <!-- מסך 1: בחירת סולם -->
         <div id="home-screen" class="screen">
             <h2 style="text-align: center; margin-bottom: 20px;">בחר סולם לתרגול</h2>
 
@@ -331,14 +396,12 @@
             </div>
         </div>
 
-        <!-- מסך 2: תרגול סולם -->
         <div id="scale-practice-screen" class="screen" style="display: none;">
             <h2 id="scale-title" style="text-align: center; margin-bottom: 20px; color: var(--secondary-color);"></h2>
             
             <p style="text-align: center; font-weight: 500;">מרווחים בין תו לתו (LTR):</p>
             <div id="scale-intervals-container" class="scale-intervals-display">
-                <!-- מרווחים יוצגו כאן -->
-            </div>
+                </div>
 
             <div class="controls-group" style="margin-top: 30px; justify-content: center;">
                 <button id="show-notes-btn" onclick="showScaleNotes()">הצג את התווים</button>
@@ -346,21 +409,25 @@
 
             <p style="text-align: center; font-weight: 500; margin-top: 20px; display: none;" id="notes-label">תווי הסולם (LTR):</p>
             <div id="scale-notes-container" class="result-display">
-                <!-- תווים יוצגו כאן -->
-            </div>
+                </div>
 
             <div class="controls-group" style="margin-top: 40px;">
                 <button onclick="switchScreen('home-screen')">חזור לבית</button>
             </div>
         </div>
 
-        <!-- מסך 3: תרגול מהלכי אקורדים -->
         <div id="progression-practice-screen" class="screen" style="display: none;">
             <h2 id="progression-title" style="text-align: center; margin-bottom: 30px; color: var(--secondary-color);"></h2>
 
-            <div id="current-progression-container" class="result-display" style="justify-content: space-around; min-height: 120px; flex-wrap: nowrap; overflow-x: auto;">
-                <!-- מהלך אקורדים יוצג כאן -->
+            <div class="toggle-switch-container">
+                <label for="toggle-chord-names" class="toggle-switch-label">הסתר שמות אקורדים</label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-chord-names" onchange="displayCurrentProgression()">
+                    <span class="slider round"></span>
+                </label>
             </div>
+            <div id="current-progression-container" class="result-display" style="justify-content: space-around; min-height: 120px; flex-wrap: nowrap; overflow-x: auto;">
+                </div>
             
             <p id="progression-description" style="text-align: center; margin-top: 15px; font-style: italic; color: #4b5563;"></p>
 
@@ -376,20 +443,17 @@
         
     </div>
     
-    <!-- מודל מידע על אקורד -->
     <div id="chord-modal" class="modal">
         <div class="modal-content">
             <h3 id="modal-chord-title"></h3>
             
             <p style="font-weight: bold; text-align: right; margin-bottom: 10px;">תווים מרכיבים (LTR):</p>
             <div id="modal-notes-display" class="modal-notes-display">
-                <!-- תווי האקורד יוצגו כאן -->
-            </div>
+                </div>
             
             <p style="font-weight: bold; text-align: right; margin-bottom: 10px;">הסבר הרמוני:</p>
             <div id="modal-description" class="modal-description">
-                <!-- הסבר הרמוני יוצג כאן -->
-            </div>
+                </div>
             
             <button id="modal-close-button" class="modal-close-button" onclick="closeChordModal()">הבנתי</button>
         </div>
@@ -1410,6 +1474,9 @@
         progressionData = selectedQuality === 'major' ? ALL_PROGRESSIONS_MAJOR : ALL_PROGRESSIONS_MINOR;
         currentProgressionIndex = 0;
         
+        // איפוס המתג (כבוי כברירת מחדל)
+        document.getElementById('toggle-chord-names').checked = false;
+        
         displayCurrentProgression();
         switchScreen('progression-practice-screen');
     }
@@ -1449,6 +1516,9 @@
         document.getElementById('progression-title').textContent = `מהלך ${progression.sequence_number} מתוך ${progressionData.length} בסולם ${scaleName}`;
         document.getElementById('progression-description').textContent = progression.description_he;
 
+        // --- שינוי JS חדש: קריאת מצב המתג ---
+        const shouldHideNames = document.getElementById('toggle-chord-names').checked;
+        // --- סוף שינוי JS ---
 
         progression.roots_intervals.forEach((intervalFromRoot, index) => {
             const chordType = progression.chord_types[index];
@@ -1478,10 +1548,17 @@
             
             stepEl.onclick = () => openChordModal(chordRootNote, chordType, romanSymbol, chordName);
 
+            // --- שינוי JS חדש: התניית הצגת שם האקורד ---
+            const chordNameHTML = shouldHideNames ? 
+                '' : // אם המתג פועל (מוסתר), הצג מחרוזת ריקה
+                `<div class="chord-name">${chordName}</div>`; // אחרת, הצג את שם האקורד
+
             stepEl.innerHTML = `
                 <div class="roman-numeral">${romanSymbol}</div>
-                <div class="chord-name">${chordName}</div>
+                ${chordNameHTML}
             `;
+            // --- סוף שינוי JS ---
+
             container.appendChild(stepEl);
         });
     }
