@@ -1472,7 +1472,9 @@
     function startChordPractice() {
         // איפוס האינדקס ובחירת מערך המהלכים הרלוונטי
         progressionData = selectedQuality === 'major' ? ALL_PROGRESSIONS_MAJOR : ALL_PROGRESSIONS_MINOR;
-        currentProgressionIndex = 0;
+        
+        // *** שינוי 1: התחלה מ-1- ***
+        currentProgressionIndex = -1; // נתחיל מהשלב המיוחד "הכר את הסולם"
         
         // איפוס המתג (כבוי כברירת מחדל)
         document.getElementById('toggle-chord-names').checked = false;
@@ -1481,22 +1483,31 @@
         switchScreen('progression-practice-screen');
     }
 
+    // *** שינוי 2: החלפת פונקציית changeProgression ***
     function changeProgression(step) {
-        currentProgressionIndex = (currentProgressionIndex + step) % progressionData.length;
-        if (currentProgressionIndex < 0) {
-            currentProgressionIndex = progressionData.length - 1;
+        const totalSteps = progressionData.length + 1; // +1 עבור שלב "הכר את הסולם"
+        let newIndex = currentProgressionIndex + step;
+
+        if (newIndex < -1) {
+            // אם היינו ב-1- ולחצנו "קודם", נעבור למהלך האחרון
+            newIndex = progressionData.length - 1;
+        } else if (newIndex >= progressionData.length) {
+            // אם היינו במהלך האחרון ולחצנו "הבא", נחזור ל-1-
+            newIndex = -1;
         }
+
+        currentProgressionIndex = newIndex;
         displayCurrentProgression();
     }
 
+    // *** שינוי 3: החלפת פונקציית displayCurrentProgression ***
     function displayCurrentProgression() {
         if (progressionData.length === 0) return;
 
-        const progression = progressionData[currentProgressionIndex];
         const container = document.getElementById('current-progression-container');
         container.innerHTML = '';
         
-        // חישוב שורש הסולם הנבחר
+        // --- שלב 1: חישוב נתוני הסולם (הוזז למעלה כדי לשרת את שני המצבים) ---
         const rootDistance = BASE_NOTE_DISTANCES[selectedRoot];
         let finalDistance = rootDistance;
         
@@ -1512,56 +1523,122 @@
         if (selectedAccidental === 'flat') accidentalSymbol = '♭';
 
         const scaleName = `${selectedRoot}${accidentalSymbol} ${selectedQuality === 'major' ? scale_Major.name_he : scale_Minor.name_he}`;
-
-        document.getElementById('progression-title').textContent = `מהלך ${progression.sequence_number} מתוך ${progressionData.length} בסולם ${scaleName}`;
-        document.getElementById('progression-description').textContent = progression.description_he;
-
-        // --- שינוי JS חדש: קריאת מצב המתג ---
-        const shouldHideNames = document.getElementById('toggle-chord-names').checked;
-        // --- סוף שינוי JS ---
-
-        progression.roots_intervals.forEach((intervalFromRoot, index) => {
-            const chordType = progression.chord_types[index];
-            const romanSymbol = progression.symbol_roman[index];
-
-            // 1. חישוב שורש האקורד הנוכחי
-            const chordRootDistance = (finalDistance + intervalFromRoot) % 12;
-            const chordRootNote = findNoteByDistance(chordRootDistance);
+        
+        // --- שלב 2: בדיקה אם אנחנו במצב "הכר את הסולם" (אינדקס 1-) ---
+        if (currentProgressionIndex === -1) {
             
-            // 2. יצירת שם האקורד תוך שימוש בכתיב של השורש הנבחר (דיאז/במול)
-            let chordRootNameEn = chordRootNote.name_en_primary;
-            if (selectedAccidental === 'flat' && chordRootNote.name_en_alternate !== chordRootNote.name_en_primary) {
-                chordRootNameEn = chordRootNote.name_en_alternate;
-            } else if (selectedAccidental === 'sharp' && chordRootNote.name_en_primary.includes('♭')) {
-                chordRootNameEn = chordRootNote.name_en_primary;
+            // --- זהו הקוד החדש ---
+            document.getElementById('progression-title').textContent = `הכר את הסולם: ${scaleName}`;
+            document.getElementById('progression-description').textContent = 'אלו הן 7 דרגות הסולם הבסיסיות שעליהן נבנים האקורדים.';
+            
+            // הסתר את מתג ה"הסתר שמות", הוא לא רלוונטי כאן
+            document.querySelector('.toggle-switch-container').style.display = 'none';
+
+            let degrees, intervals, types;
+
+            if (selectedQuality === 'major') {
+                degrees = ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii°'];
+                intervals = [0, 2, 4, 5, 7, 9, 11]; // מתוך scale_Major.intervals
+                types = [chord_Major, chord_Minor, chord_Minor, chord_Major, chord_Major, chord_Minor, chord_Diminished];
+            } else {
+                // מינור טבעי, לפי הנתונים הקיימים
+                degrees = ['i', 'ii°', 'III', 'iv', 'v', 'VI', 'VII'];
+                intervals = [0, 2, 3, 5, 7, 8, 10]; // מתוך scale_Minor.intervals
+                types = [chord_Minor, chord_Diminished, chord_Major, chord_Minor, chord_Minor, chord_Major, chord_Major];
             }
+
+            // יצירת 7 הדרגות
+            intervals.forEach((intervalFromRoot, index) => {
+                const chordType = types[index];
+                const romanSymbol = degrees[index];
+
+                const chordRootDistance = (finalDistance + intervalFromRoot) % 12;
+                const chordRootNote = findNoteByDistance(chordRootDistance);
+                
+                let chordRootNameEn = chordRootNote.name_en_primary;
+                if (selectedAccidental === 'flat' && chordRootNote.name_en_alternate !== chordRootNote.name_en_primary) {
+                    chordRootNameEn = chordRootNote.name_en_alternate;
+                }
+                
+                const chordName = chordRootNameEn + chordType.symbol_suffix;
+
+                const stepEl = document.createElement('div');
+                stepEl.className = 'progression-step';
+                stepEl.setAttribute('tabindex', 0);
+                stepEl.dataset.rootDistance = chordRootNote.half_tone_distance;
+                stepEl.dataset.chordType = chordType.symbol_suffix;
+                stepEl.dataset.roman = romanSymbol;
+                stepEl.dataset.fullChordName = chordName;
+                
+                stepEl.onclick = () => openChordModal(chordRootNote, chordType, romanSymbol, chordName);
+
+                // כאן אנו מציגים את השם כברירת מחדל
+                stepEl.innerHTML = `
+                    <div class="roman-numeral">${romanSymbol}</div>
+                    <div class="chord-name">${chordName}</div>
+                `;
+                container.appendChild(stepEl);
+            });
+
+        } else {
+            // --- זהו הקוד המקורי, שפועל עבור אינדקס 0 ומעלה ---
             
-            const chordName = chordRootNameEn + chordType.symbol_suffix;
+            // ודא שהמתג מוצג
+            document.querySelector('.toggle-switch-container').style.display = 'flex';
 
-            const stepEl = document.createElement('div');
-            stepEl.className = 'progression-step';
-            stepEl.setAttribute('tabindex', 0);
-            stepEl.dataset.rootDistance = chordRootNote.half_tone_distance;
-            stepEl.dataset.chordType = chordType.symbol_suffix;
-            stepEl.dataset.roman = romanSymbol;
-            stepEl.dataset.fullChordName = chordName;
+            const progression = progressionData[currentProgressionIndex];
             
-            stepEl.onclick = () => openChordModal(chordRootNote, chordType, romanSymbol, chordName);
+            document.getElementById('progression-title').textContent = `מהלך ${progression.sequence_number} מתוך ${progressionData.length} בסולם ${scaleName}`;
+            document.getElementById('progression-description').textContent = progression.description_he;
 
-            // --- שינוי JS חדש: התניית הצגת שם האקורד ---
-            const chordNameHTML = shouldHideNames ? 
-                '' : // אם המתג פועל (מוסתר), הצג מחרוזת ריקה
-                `<div class="chord-name">${chordName}</div>`; // אחרת, הצג את שם האקורד
-
-            stepEl.innerHTML = `
-                <div class="roman-numeral">${romanSymbol}</div>
-                ${chordNameHTML}
-            `;
+            // --- שינוי JS חדש: קריאת מצב המתג ---
+            const shouldHideNames = document.getElementById('toggle-chord-names').checked;
             // --- סוף שינוי JS ---
 
-            container.appendChild(stepEl);
-        });
+            progression.roots_intervals.forEach((intervalFromRoot, index) => {
+                const chordType = progression.chord_types[index];
+                const romanSymbol = progression.symbol_roman[index];
+
+                // 1. חישוב שורש האקורד הנוכחי
+                const chordRootDistance = (finalDistance + intervalFromRoot) % 12;
+                const chordRootNote = findNoteByDistance(chordRootDistance);
+                
+                // 2. יצירת שם האקורד תוך שימוש בכתיב של השורש הנבחר (דיאז/במול)
+                let chordRootNameEn = chordRootNote.name_en_primary;
+                if (selectedAccidental === 'flat' && chordRootNote.name_en_alternate !== chordRootNote.name_en_primary) {
+                    chordRootNameEn = chordRootNote.name_en_alternate;
+                } else if (selectedAccidental === 'sharp' && chordRootNote.name_en_primary.includes('♭')) {
+                    chordRootNameEn = chordRootNote.name_en_primary;
+                }
+                
+                const chordName = chordRootNameEn + chordType.symbol_suffix;
+
+                const stepEl = document.createElement('div');
+                stepEl.className = 'progression-step';
+                stepEl.setAttribute('tabindex', 0);
+                stepEl.dataset.rootDistance = chordRootNote.half_tone_distance;
+                stepEl.dataset.chordType = chordType.symbol_suffix;
+                stepEl.dataset.roman = romanSymbol;
+                stepEl.dataset.fullChordName = chordName;
+                
+                stepEl.onclick = () => openChordModal(chordRootNote, chordType, romanSymbol, chordName);
+
+                // --- שינוי JS חדש: התניית הצגת שם האקורד ---
+                const chordNameHTML = shouldHideNames ? 
+                    '' : // אם המתג פועל (מוסתר), הצג מחרוזת ריקה
+                    `<div class="chord-name">${chordName}</div>`; // אחרת, הצג את שם האקורד
+
+                stepEl.innerHTML = `
+                    <div class="roman-numeral">${romanSymbol}</div>
+                    ${chordNameHTML}
+                `;
+                // --- סוף שינוי JS ---
+
+                container.appendChild(stepEl);
+            });
+        }
     }
+
 
     function openChordModal(rootNote, chordType, romanSymbol, fullChordName) {
         // מחשב את תווי האקורד
