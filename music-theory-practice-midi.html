@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>תרגול תיאוריה מוזיקלית</title>
+    <title>תרגול תאוריה מוזיקלית</title>
+        <!-- הוספת פונט Heebo גלובלי לשיפור המראה העברי -->
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
+        /* איפוס ועיצוב בסיסי */
         :root {
-            --primary-color: #3b82f6;
-            --secondary-color: #f59e0b;
-            --bg-color: #f9fafb;
+            --primary-color: #3b82f6; /* כחול */
+            --secondary-color: #f59e0b; /* כתום */
+            --bg-color: #f9fafb; /* רקע בהיר */
             --card-bg: #ffffff;
             --text-color: #1f2937;
             --border-radius-lg: 1rem;
@@ -36,7 +38,7 @@
             border-radius: var(--border-radius-lg);
             box-shadow: var(--box-shadow);
             padding: 30px;
-            direction: rtl;
+            direction: rtl; /* כיוון כתיבה כללי עברי */
         }
 
         h1 {
@@ -46,6 +48,7 @@
             font-size: 1.8rem;
         }
 
+        /* כפתורים ופקדים */
         .controls-group, .note-buttons, .accidental-buttons, .quality-buttons {
             display: flex;
             gap: 10px;
@@ -87,6 +90,7 @@
             box-shadow: none;
         }
         
+        /* כפתורי פעולה עיקריים */
         .action-buttons button {
             flex-grow: 1;
             background-color: var(--secondary-color);
@@ -101,12 +105,14 @@
             border-color: #f97316;
         }
 
+        /* כפתורי דיאז/במול */
         .accidental-buttons button {
             min-width: 60px;
             font-size: 1.2rem;
             font-weight: bold;
         }
 
+        /* תצוגת תוצאות (LTR) */
         .result-display {
             display: flex;
             flex-wrap: wrap;
@@ -117,7 +123,7 @@
             border: 1px solid #e5e7eb;
             border-radius: var(--border-radius-lg);
             background-color: #fff;
-            direction: ltr;
+            direction: ltr; /* יישור התוצאות משמאל לימין */
         }
         
         .result-item {
@@ -132,7 +138,7 @@
             font-size: 1.1rem;
             font-weight: bold;
             transition: var(--transition);
-            background-color: #eff6ff;
+            background-color: #eff6ff; /* כחול בהיר */
         }
         
         .result-item:hover {
@@ -147,6 +153,7 @@
             color: #4b5563;
         }
 
+        /* תצוגת מהלכי אקורדים */
         .progression-step {
             display: flex;
             flex-direction: column;
@@ -176,6 +183,7 @@
             color: var(--text-color);
         }
 
+        /* מודל מידע על אקורד */
         .modal {
             position: fixed;
             top: 0;
@@ -216,7 +224,7 @@
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
-            direction: ltr;
+            direction: ltr; /* תווי האקורד משמאל לימין */
             justify-content: center;
         }
         
@@ -253,30 +261,33 @@
             font-size: 1.1rem;
         }
 
+        /* מסך תרגול סולם - מרווחים */
         .scale-intervals-display {
             display: flex;
             gap: 15px;
             margin-top: 20px;
             justify-content: center;
-            direction: ltr;
+            direction: ltr; /* מרווחים משמאל לימין */
             flex-wrap: wrap;
         }
         
         .interval-item {
             padding: 8px 15px;
-            background-color: #fee2e2;
-            color: #dc2626;
+            background-color: #fee2e2; /* אדום בהיר */
+            color: #dc2626; /* אדום כהה */
             border-radius: 0.5rem;
             font-weight: bold;
             font-size: 0.9rem;
             border: 1px solid #fca5a5;
         }
 
+        /* אנימציות */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* === תוספת CSS חדשה: עיצוב מתג (Toggle Switch) === */
         .toggle-switch-container {
             display: flex;
             justify-content: center;
@@ -341,21 +352,26 @@
             border-radius: 50%;
         }
 
-        /* תוספות עבור מצב MIDI */
+        /* === תוספות עבור מצב MIDI === */
+
+        /* הדגשת האקורד הנוכחי שצריך לנגן */
         .progression-step.current-target {
-            border: 3px solid var(--secondary-color);
-            background-color: #fff7ed;
-            transform: scale(1.15);
-            box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+            border-color: var(--secondary-color);
+            background-color: #fff7ed; /* כתום בהיר מאוד */
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
             z-index: 10;
+            border-radius: 0.75rem; /* הוספת רדיוס להדגשה יפה יותר */
+            border: 2px solid var(--secondary-color); /* שיהיה גבול ברור */
         }
 
+        /* הודעת שגיאה צפה */
         .error-toast {
             position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: #ef4444;
+            background-color: #ef4444; /* אדום */
             color: white;
             padding: 15px 30px;
             border-radius: 50px;
@@ -365,22 +381,22 @@
             z-index: 2000;
             opacity: 0;
             transition: opacity 0.3s;
-            pointer-events: none;
+            pointer-events: none; /* שלא יפריע ללחיצות */
         }
 
         .error-toast.show {
             opacity: 1;
         }
 
+        /* כפתור MIDI בדף הבית */
         .midi-btn {
-            background-color: #8b5cf6 !important;
+            background-color: #8b5cf6 !important; /* סגול להפרדה */
             border-color: #8b5cf6 !important;
         }
-        
         .midi-btn:hover {
             background-color: #7c3aed !important;
         }
-
+        
     </style>
 </head>
 <body>
@@ -397,7 +413,7 @@
                     <button data-note="C">C (דו)</button>
                     <button data-note="D">D (רה)</button>
                     <button data-note="E">E (מי)</button>
-                    <button data-note="F">F (פה)</button>
+                    <button data-note="F">F (פא)</button>
                     <button data-note="G">G (סול)</button>
                     <button data-note="A">A (לה)</button>
                     <button data-note="B">B (סי)</button>
@@ -430,7 +446,7 @@
             
             <p style="text-align: center; font-weight: 500;">מרווחים בין תו לתו (LTR):</p>
             <div id="scale-intervals-container" class="scale-intervals-display">
-            </div>
+                </div>
 
             <div class="controls-group" style="margin-top: 30px; justify-content: center;">
                 <button id="show-notes-btn" onclick="showScaleNotes()">הצג את התווים</button>
@@ -438,7 +454,7 @@
 
             <p style="text-align: center; font-weight: 500; margin-top: 20px; display: none;" id="notes-label">תווי הסולם (LTR):</p>
             <div id="scale-notes-container" class="result-display">
-            </div>
+                </div>
 
             <div class="controls-group" style="margin-top: 40px;">
                 <button onclick="switchScreen('home-screen')">חזור לבית</button>
@@ -456,7 +472,7 @@
                 </label>
             </div>
             <div id="current-progression-container" class="result-display" style="justify-content: space-around; min-height: 120px; flex-wrap: nowrap; overflow-x: auto;">
-            </div>
+                </div>
             
             <p id="progression-description" style="text-align: center; margin-top: 15px; font-style: italic; color: #4b5563;"></p>
 
@@ -478,26 +494,32 @@
             
             <p style="font-weight: bold; text-align: right; margin-bottom: 10px;">תווים מרכיבים (LTR):</p>
             <div id="modal-notes-display" class="modal-notes-display">
-            </div>
+                </div>
             
             <p style="font-weight: bold; text-align: right; margin-bottom: 10px;">הסבר הרמוני:</p>
             <div id="modal-description" class="modal-description">
-            </div>
+                </div>
             
             <button id="modal-close-button" class="modal-close-button" onclick="closeChordModal()">הבנתי</button>
         </div>
     </div>
-
+    
     <div id="error-toast" class="error-toast">טעות! חזרה להתחלה...</div>
 
 <script>
+    // =========================================================================================
+    // 1. הטמעת קבצי ה-JS: Notes, Chords, Scales
+    // =========================================================================================
+
+    // --- notes_data.js ---
+    // הגדרות הקלידים (צלילים) באוקטבה אחת
     const note_C1 = { name_en_primary: 'C', name_en_alternate: 'C', name_he_primary: 'דו', name_he_alternate: 'דו', half_tone_distance: 0 };
     const note_CSharp1 = { name_en_primary: 'C♯', name_en_alternate: 'D♭', name_he_primary: 'דו דיאז', name_he_alternate: 'רה במול', half_tone_distance: 1 };
     const note_D1 = { name_en_primary: 'D', name_en_alternate: 'D', name_he_primary: 'רה', name_he_alternate: 'רה', half_tone_distance: 2 };
     const note_DSharp1 = { name_en_primary: 'D♯', name_en_alternate: 'E♭', name_he_primary: 'רה דיאז', name_he_alternate: 'מי במול', half_tone_distance: 3 };
     const note_E1 = { name_en_primary: 'E', name_en_alternate: 'E', name_he_primary: 'מי', name_he_alternate: 'מי', half_tone_distance: 4 };
-    const note_F1 = { name_en_primary: 'F', name_en_alternate: 'F', name_he_primary: 'פה', name_he_alternate: 'פה', half_tone_distance: 5 };
-    const note_FSharp1 = { name_en_primary: 'F♯', name_en_alternate: 'G♭', name_he_primary: 'פה דיאז', name_he_alternate: 'סול במול', half_tone_distance: 6 };
+    const note_F1 = { name_en_primary: 'F', name_en_alternate: 'F', name_he_primary: 'פא', name_he_alternate: 'פא', half_tone_distance: 5 };
+    const note_FSharp1 = { name_en_primary: 'F♯', name_en_alternate: 'G♭', name_he_primary: 'פא דיאז', name_he_alternate: 'סול במול', half_tone_distance: 6 };
     const note_G1 = { name_en_primary: 'G', name_en_alternate: 'G', name_he_primary: 'סול', name_he_alternate: 'סול', half_tone_distance: 7 };
     const note_GSharp1 = { name_en_primary: 'G♯', name_en_alternate: 'A♭', name_he_primary: 'סול דיאז', name_he_alternate: 'לה במול', half_tone_distance: 8 };
     const note_A1 = { name_en_primary: 'A', name_en_alternate: 'A', name_he_primary: 'לה', name_he_alternate: 'לה', half_tone_distance: 9 };
@@ -510,20 +532,24 @@
     ].sort((a, b) => a.half_tone_distance - b.half_tone_distance);
     const BASE_NOTE_DISTANCES = { 'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11 };
 
-    const chord_Major = { name_he: 'מז\'ור', name_en: 'Major', symbol_suffix: '', description_he: 'האקורד הבסיסי, מורכב מפרימה, טרצה גדולה (4 חצאי טונים) וקווינטה זכה (7 חצאי טונים).', intervals: [0, 4, 7] };
+    // --- chords_data.js ---
+    // הגדרות של 10 סוגי אקורדים נפוצים
+    const chord_Major = { name_he: 'מז׳ור', name_en: 'Major', symbol_suffix: '', description_he: 'האקורד הבסיסי, מורכב מפרימה, טרצה גדולה (4 חצאי טונים) וקווינטה זכה (7 חצאי טונים).', intervals: [0, 4, 7] };
     const chord_Minor = { name_he: 'מינור', name_en: 'Minor', symbol_suffix: 'm', description_he: 'אקורד בעל אופי נוגה, מורכב מפרימה, טרצה קטנה (3 חצאי טונים) וקווינטה זכה.', intervals: [0, 3, 7] };
     const chord_Dominant7 = { name_he: 'דומיננט 7', name_en: 'Dominant 7th', symbol_suffix: '7', description_he: 'אקורד עם מתח חזק (טריטון), רוצה להיפתר לטוניקה. מורכב מטרצה גדולה, קווינטה זכה ושביעית קטנה (10 חצאי טונים).', intervals: [0, 4, 7, 10] };
-    const chord_Major7 = { name_he: 'מז\'ור 7', name_en: 'Major 7th', symbol_suffix: 'maj7', description_he: 'אקורד יציב ורך, עם שביעית גדולה (11 חצאי טונים).', intervals: [0, 4, 7, 11] };
-    const chord_Minor7 = { name_he: 'מינור 7', name_en: 'Minor 7th', symbol_suffix: 'm7', description_he: 'אקורד רגוע ונינוח, משמש רבות בג\'אז ובפיוז\'ן, עם טרצה קטנה ושביעית קטנה.', intervals: [0, 3, 7, 10] };
-    const chord_HalfDiminished = { name_he: 'מינור 7b5', name_en: 'Minor 7th flat 5 (Half-Diminished)', symbol_suffix: 'm7b5', description_he: 'אקורד מורכב עם מתח חזק, משמש בעיקר במוזיקת ג\'אז, עם קווינטה מוקטנת (6 חצאי טונים).', intervals: [0, 3, 6, 10] };
+    const chord_Major7 = { name_he: 'מז׳ור 7', name_en: 'Major 7th', symbol_suffix: 'maj7', description_he: 'אקורד יציב ורך, עם שביעית גדולה (11 חצאי טונים).', intervals: [0, 4, 7, 11] };
+    const chord_Minor7 = { name_he: 'מינור 7', name_en: 'Minor 7th', symbol_suffix: 'm7', description_he: 'אקורד רגוע ונינוח, משמש רבות בג׳אז ובפיוז׳ן, עם טרצה קטנה ושביעית קטנה.', intervals: [0, 3, 7, 10] };
+    const chord_HalfDiminished = { name_he: 'מינור 7b5', name_en: 'Minor 7th flat 5 (Half-Diminished)', symbol_suffix: 'm7b5', description_he: 'אקורד מורכב עם מתח חזק, משמש בעיקר במוזיקת ג׳אז, עם קווינטה מוקטנת (6 חצאי טונים).', intervals: [0, 3, 6, 10] };
     const chord_Augmented = { name_he: 'מוגדל', name_en: 'Augmented', symbol_suffix: 'aug', description_he: 'אקורד עם תחושה חלומית או מתוחה, עם קווינטה מוגדלת (8 חצאי טונים).', intervals: [0, 4, 8] };
     const chord_Diminished = { name_he: 'מוקטן', name_en: 'Diminished', symbol_suffix: 'dim', description_he: 'אקורד לא יציב ודרמטי, עם טרצה קטנה וקווינטה מוקטנת.', intervals: [0, 3, 6] };
     const chord_Sus4 = { name_he: 'סאס 4', name_en: 'Suspended 4th', symbol_suffix: 'sus4', description_he: 'אקורד ללא טרצה, במקומה יש קוורטה (5 חצאי טונים), יוצר תחושת המתנה.', intervals: [0, 5, 7] };
     const chord_Sus2 = { name_he: 'סאס 2', name_en: 'Suspended 2nd', symbol_suffix: 'sus2', description_he: 'אקורד ללא טרצה, במקומה יש סקונדה גדולה (2 חצאי טונים), יוצר תחושת פתיחות.', intervals: [0, 2, 7] };
     const ALL_CHORDS_MAP = { 'Major': chord_Major, 'Minor': chord_Minor, 'Dominant7': chord_Dominant7, 'Major7': chord_Major7, 'Minor7': chord_Minor7, 'HalfDiminished': chord_HalfDiminished, 'Augmented': chord_Augmented, 'Diminished': chord_Diminished, 'Sus4': chord_Sus4, 'Sus2': chord_Sus2 };
 
+    // --- scales_data.js ---
+    // הגדרות סולמות בסיסיים (מז'ור ומינור)
     const scale_Major = {
-        name_he: 'מז\'ור',
+        name_he: 'מז׳ור',
         name_en: 'Major',
         description_he: 'סולם משמח ובהיר, אבן הבניין הבסיסית של המוזיקה המערבית.',
         intervals: [0, 2, 4, 5, 7, 9, 11],
@@ -533,12 +559,19 @@
     const scale_Minor = {
         name_he: 'מינור טבעי',
         name_en: 'Natural Minor',
-        description_he: 'סולם בעל אופי נוגה ומלנכולי, יחסי לסולם המז\'ור (היחסי).',
+        description_he: 'סולם בעל אופי נוגה ומלנכולי, יחסי לסולם המז׳ור (היחסי).',
         intervals: [0, 2, 3, 5, 7, 8, 10],
         step_intervals_he: ['טון', 'חצי טון', 'טון', 'טון', 'חצי טון', 'טון', 'טון']
     };
 
+    // =========================================================================================
+    // 2. הטמעת קבצי ה-JS: מהלכי אקורדים (Progressions) - מלאים
+    // =========================================================================================
+
+    // --- chord_progressions_maj.js (מלא) ---
+    // מרווחי השורשים (Roots) הדיאטוניים בסולם מז'ור: I=0, ii=2, iii=4, IV=5, V=7, vi=9, vii°=11
     const ALL_PROGRESSIONS_MAJOR = [
+        // === קבוצה 1: קל (הכי נפוץ, משולשים בלבד) ===
         {
             sequence_number: 1,
             symbol_roman: ['I', 'IV', 'V', 'I'],
@@ -558,7 +591,7 @@
             symbol_roman: ['ii', 'V', 'I'],
             roots_intervals: [2, 7, 0],
             chord_types: [chord_Minor, chord_Major, chord_Major],
-            description_he: 'קדנצה בסיסית בג\'אז ובמוזיקה קלאסית, מתחזקת את הטוניקה.'
+            description_he: 'קדנצה בסיסית בג׳אז ובמוזיקה קלאסית, מתחזקת את הטוניקה.'
         },
         {
             sequence_number: 4,
@@ -573,10 +606,333 @@
             roots_intervals: [0, 4, 9, 5],
             chord_types: [chord_Major, chord_Minor, chord_Minor, chord_Major],
             description_he: 'מהלך רגוע ומלודי, עובר דרך הדרגה השלישית המינורית.'
-        }
+        },
+        {
+            sequence_number: 6,
+            symbol_roman: ['vi', 'IV', 'I', 'V'],
+            roots_intervals: [9, 5, 0, 7],
+            chord_types: [chord_Minor, chord_Major, chord_Major, chord_Major],
+            description_he: 'וריאציה של מהלך הפופ המתחילה בדרגה המינורית השישית.'
+        },
+        {
+            sequence_number: 7,
+            symbol_roman: ['I', 'IV', 'I', 'V'],
+            roots_intervals: [0, 5, 0, 7],
+            chord_types: [chord_Major, chord_Major, chord_Major, chord_Major],
+            description_he: 'מהלך פשוט ובטוח, מתאים לשירים קלילים ועממיים.'
+        },
+        {
+            sequence_number: 8,
+            symbol_roman: ['iii', 'vi', 'ii', 'V'],
+            roots_intervals: [4, 9, 2, 7],
+            chord_types: [chord_Minor, chord_Minor, chord_Minor, chord_Major],
+            description_he: 'רצף יורד של אקורדים המכין את הקרקע לקדנצה V-I.'
+        },
+        {
+            sequence_number: 9,
+            symbol_roman: ['I', 'IV', 'V', 'vi'],
+            roots_intervals: [0, 5, 7, 9],
+            chord_types: [chord_Major, chord_Major, chord_Major, chord_Minor],
+            description_he: 'מהלך נדיר יחסית המשתמש ב-vi כנקודת תנועה לאחור.'
+        },
+        {
+            sequence_number: 10,
+            symbol_roman: ['ii', 'I', 'V', 'IV'],
+            roots_intervals: [2, 0, 7, 5],
+            chord_types: [chord_Minor, chord_Major, chord_Major, chord_Major],
+            description_he: 'מהלך אקורדים המשתמש בדרגה ii כדי להגיע חזרה לטוניקה.'
+        },
+        // === קבוצה 2: בינוני (שביעיות וסאספנדים) ===
+        {
+            sequence_number: 11,
+            symbol_roman: ['I', 'V7', 'I', 'IV'],
+            roots_intervals: [0, 7, 0, 5],
+            chord_types: [chord_Major, chord_Dominant7, chord_Major, chord_Major],
+            description_he: 'שימוש ב-V7 (דומיננט 7) להדגשת הקדנצה ל-I.'
+        },
+        {
+            sequence_number: 12,
+            symbol_roman: ['ii7', 'V7', 'Imaj7'],
+            roots_intervals: [2, 7, 0],
+            chord_types: [chord_Minor7, chord_Dominant7, chord_Major7],
+            description_he: 'הקדנצה הג׳אזית הקלאסית (ii-V-I) עם שביעיות.'
+        },
+        {
+            sequence_number: 13,
+            symbol_roman: ['Imaj7', 'IVmaj7', 'ii7', 'V7'],
+            roots_intervals: [0, 5, 2, 7],
+            chord_types: [chord_Major7, chord_Major7, chord_Minor7, chord_Dominant7],
+            description_he: 'מהלך הרמוני חלק, נפוץ במוזיקת לאונג׳ ובוסה נובה.'
+        },
+        {
+            sequence_number: 14,
+            symbol_roman: ['I', 'V(sus4)', 'V', 'I'],
+            roots_intervals: [0, 7, 7, 0],
+            chord_types: [chord_Major, chord_Sus4, chord_Major, chord_Major],
+            description_he: 'שימוש באקורד מושעה (sus4) כדי ליצור מתח קל לפני הפתרון.'
+        },
+        {
+            sequence_number: 15,
+            symbol_roman: ['iii7', 'vi7', 'ii7', 'V7'],
+            roots_intervals: [4, 9, 2, 7],
+            chord_types: [chord_Minor7, chord_Minor7, chord_Minor7, chord_Dominant7],
+            description_he: 'רצף שביעיות יורד שמוביל באופן טבעי לקדנצה V7.'
+        },
+        {
+            sequence_number: 16,
+            symbol_roman: ['IV', 'V', 'vi', 'iii'],
+            roots_intervals: [5, 7, 9, 4],
+            chord_types: [chord_Major, chord_Major, chord_Minor, chord_Minor],
+            description_he: 'מהלך מתוח יותר היוצר תחושת תנועה רציפה.'
+        },
+        {
+            sequence_number: 17,
+            symbol_roman: ['Imaj7', 'iii7', 'IVmaj7', 'vi7'],
+            roots_intervals: [0, 4, 5, 9],
+            chord_types: [chord_Major7, chord_Minor7, chord_Major7, chord_Minor7],
+            description_he: 'מהלך רך ויציב הנע בין שביעיות מז׳ור ומינור.'
+        },
+        {
+            sequence_number: 18,
+            symbol_roman: ['vi', 'V', 'IV', 'I'],
+            roots_intervals: [9, 7, 5, 0],
+            chord_types: [chord_Minor, chord_Major, chord_Major, chord_Major],
+            description_he: 'מהלך יורד (descending) פופולרי ברוק, מתחיל בדרגה המינורית.'
+        },
+        {
+            sequence_number: 19,
+            symbol_roman: ['I(sus2)', 'I', 'IV', 'V'],
+            roots_intervals: [0, 0, 5, 7],
+            chord_types: [chord_Sus2, chord_Major, chord_Major, chord_Major],
+            description_he: 'שימוש ב-sus2 כקישוט לטוניקה לפני מעבר ל-IV.'
+        },
+        {
+            sequence_number: 20,
+            symbol_roman: ['IVmaj7', 'Imaj7', 'ii7', 'V7'],
+            roots_intervals: [5, 0, 2, 7],
+            chord_types: [chord_Major7, chord_Major7, chord_Minor7, chord_Dominant7],
+            description_he: 'מהלך מתחלף (plagal) שמכין ל-ii-V-I ג׳אזי.'
+        },
+        // === קבוצה 3: מתקדם (דימינישד, מוגדל, ודרגות מושאלות) ===
+        {
+            sequence_number: 21,
+            symbol_roman: ['I', 'bIII', 'IV', 'V'],
+            roots_intervals: [0, 3, 5, 7],
+            chord_types: [chord_Major, chord_Major, chord_Major, chord_Major],
+            description_he: 'שימוש ב-bIII (דרגה מושאלת מהסולם המינורי) ליצירת צבע כרומטי.'
+        },
+        {
+            sequence_number: 22,
+            symbol_roman: ['I', 'IV', 'bVII', 'IV'],
+            roots_intervals: [0, 5, 10, 5],
+            chord_types: [chord_Major, chord_Major, chord_Major, chord_Major],
+            description_he: 'מהלך רוק/בלוז פופולרי המשתמש ב-bVII (דומיננט משני).'
+        },
+        {
+            sequence_number: 23,
+            symbol_roman: ['I', 'vi', 'ii', 'V7'],
+            roots_intervals: [0, 9, 2, 7],
+            chord_types: [chord_Major, chord_Minor, chord_Minor, chord_Dominant7],
+            description_he: 'מהלך יסודי, מכין את ה-ii-V לפתרון הדומיננטי.'
+        },
+        {
+            sequence_number: 24,
+            symbol_roman: ['Imaj7', 'vi7', 'ii7', 'V7'],
+            roots_intervals: [0, 9, 2, 7],
+            chord_types: [chord_Major7, chord_Minor7, chord_Minor7, chord_Dominant7],
+            description_he: 'קדנצה ג׳אזית מלאה I-vi-ii-V, הבסיס לסטנדרטים רבים.'
+        },
+        {
+            sequence_number: 25,
+            symbol_roman: ['I', 'IV', 'vii°', 'iii'],
+            roots_intervals: [0, 5, 11, 4],
+            chord_types: [chord_Major, chord_Major, chord_Diminished, chord_Minor],
+            description_he: 'שימוש ב-vii° (הדרגה המוקטנת) כגשר כרומטי מתוח.'
+        },
+        {
+            sequence_number: 26,
+            symbol_roman: ['V7/IV', 'IV', 'V7', 'I'],
+            roots_intervals: [0, 5, 7, 0],
+            chord_types: [chord_Dominant7, chord_Major, chord_Dominant7, chord_Major],
+            description_he: 'שימוש בדומיננט המשני (V7 של IV) ליצירת מתח לפני ה-IV.'
+        },
+        {
+            sequence_number: 27,
+            symbol_roman: ['I', 'V/vi', 'vi', 'IV'],
+            roots_intervals: [0, 4, 9, 5],
+            chord_types: [chord_Major, chord_Major, chord_Minor, chord_Major],
+            description_he: 'שימוש בדומיננט משני (V של vi) ליצירת מתח חזק לפני הדרגה השישית.'
+        },
+        {
+            sequence_number: 28,
+            symbol_roman: ['I', 'Iaug', 'IV', 'iv'],
+            roots_intervals: [0, 0, 5, 5],
+            chord_types: [chord_Major, chord_Augmented, chord_Major, chord_Minor],
+            description_he: 'מעבר כרומטי פנימי באמצעות אקורד I מוגדל ל-IV, ומשם ל-iv המינורי.'
+        },
+        {
+            sequence_number: 29,
+            symbol_roman: ['IV', 'vii°', 'iii', 'vi'],
+            roots_intervals: [5, 11, 4, 9],
+            chord_types: [chord_Major, chord_Diminished, chord_Minor, chord_Minor],
+            description_he: 'מהלך המשתמש באקורדים לא פופולריים ליצירת צבע מיוחד.'
+        },
+        {
+            sequence_number: 30,
+            symbol_roman: ['Imaj7', 'bIImaj7', 'Imaj7'],
+            roots_intervals: [0, 1, 0],
+            chord_types: [chord_Major7, chord_Major7, chord_Major7],
+            description_he: 'מהלך כרומטי שקט (Truck Driver Modulation), נפוץ בג׳אז ובאר׳אנבי.'
+        },
+        // === קבוצה 4: ג'אז ופיוז'ן (שביעיות מתקדמות) ===
+        {
+            sequence_number: 31,
+            symbol_roman: ['ii7', 'V7', 'Imaj7', 'IVmaj7'],
+            roots_intervals: [2, 7, 0, 5],
+            chord_types: [chord_Minor7, chord_Dominant7, chord_Major7, chord_Major7],
+            description_he: 'קדנצה ג׳אזית שמובילה לאקורד IVmaj7 להמשכיות המהלך.'
+        },
+        {
+            sequence_number: 32,
+            symbol_roman: ['iii7', 'bIII7', 'ii7', 'V7'],
+            roots_intervals: [4, 3, 2, 7],
+            chord_types: [chord_Minor7, chord_Dominant7, chord_Minor7, chord_Dominant7],
+            description_he: 'שימוש בדומיננט משני (bIII7) ככרומטיזם ליצירת מתח יורד.'
+        },
+        {
+            sequence_number: 33,
+            symbol_roman: ['I', 'vi', 'ii', 'V'],
+            roots_intervals: [0, 9, 2, 7],
+            chord_types: [chord_Major, chord_Minor, chord_Minor, chord_Major],
+            description_he: 'קאנון פופ/רוק פשוט.'
+        },
+        {
+            sequence_number: 34,
+            symbol_roman: ['Imaj7', 'bVImaj7', 'ii7', 'V7'],
+            roots_intervals: [0, 8, 2, 7],
+            chord_types: [chord_Major7, chord_Major7, chord_Minor7, chord_Dominant7],
+            description_he: 'שימוש ב-bVI (דרגה מושאלת) כדי להוסיף גוון מפתיע לפני ה-ii-V.'
+        },
+        {
+            sequence_number: 35,
+            symbol_roman: ['vi7', 'ii7', 'V7', 'Imaj7'],
+            roots_intervals: [9, 2, 7, 0],
+            chord_types: [chord_Minor7, chord_Minor7, chord_Dominant7, chord_Major7],
+            description_he: 'מהלך יסודי שמתחיל בדרגה השישית ומוביל לטוניקה (מעגל הקווינטות).'
+        },
+        {
+            sequence_number: 36,
+            symbol_roman: ['Imaj7', 'bVII7', 'IVmaj7'],
+            roots_intervals: [0, 10, 5],
+            chord_types: [chord_Major7, chord_Dominant7, chord_Major7],
+            description_he: 'מעבר לידי (backdoor) ליצירת תנועה מהירה ל-IVmaj7.'
+        },
+        {
+            sequence_number: 37,
+            symbol_roman: ['ii7', 'V7(alt)', 'Imaj7'],
+            roots_intervals: [2, 7, 0],
+            chord_types: [chord_Minor7, chord_Dominant7, chord_Major7],
+            description_he: 'קדנצה ii-V-I עם V7 מוחלף (Alternate) להוספת מתח חריף.'
+        },
+        {
+            sequence_number: 38,
+            symbol_roman: ['I', 'iii', 'V', 'IV'],
+            roots_intervals: [0, 4, 7, 5],
+            chord_types: [chord_Major, chord_Minor, chord_Major, chord_Major],
+            description_he: 'מהלך המדלג על ה-vi ומשתמש ב-iii ליצירת גוון שונה.'
+        },
+        {
+            sequence_number: 39,
+            symbol_roman: ['Imaj7', 'bIIImaj7', 'IVmaj7', 'bVmaj7'],
+            roots_intervals: [0, 3, 5, 6],
+            chord_types: [chord_Major7, chord_Major7, chord_Major7, chord_Major7],
+            description_he: 'מהלך משתנה באמצעות אקורדי מז׳ור-7 כרומטיים, נשמע מודרני.'
+        },
+        {
+            sequence_number: 40,
+            symbol_roman: ['I', 'V/V', 'V', 'I'],
+            roots_intervals: [0, 2, 7, 0],
+            chord_types: [chord_Major, chord_Dominant7, chord_Major, chord_Major],
+            description_he: 'שימוש בדומיננט הדומיננטי (V של V) כדי להדגיש את V לפני הטוניקה.'
+        },
+        // === קבוצה 5: מודרני וניסיוני ===
+        {
+            sequence_number: 41,
+            symbol_roman: ['IV', 'I', 'V/vi', 'vi'],
+            roots_intervals: [5, 0, 4, 9],
+            chord_types: [chord_Major, chord_Major, chord_Major, chord_Minor],
+            description_he: 'מהלך יורד (Descending) המשתמש ב-V/vi כדומיננט משני.'
+        },
+        {
+            sequence_number: 42,
+            symbol_roman: ['Imaj7', 'V/vi', 'IVmaj7', 'V7/ii'],
+            roots_intervals: [0, 4, 5, 9],
+            chord_types: [chord_Major7, chord_Dominant7, chord_Major7, chord_Dominant7],
+            description_he: 'רצף דומיננטים משניים היוצר מתח מתמשך.'
+        },
+        {
+            sequence_number: 43,
+            symbol_roman: ['I', 'vi', 'IV', 'V'],
+            roots_intervals: [0, 9, 5, 7],
+            chord_types: [chord_Major, chord_Minor, chord_Major, chord_Major],
+            description_he: 'מהלך קלאסי, אך נשמע נכון גם במוזיקה עדכנית.'
+        },
+        {
+            sequence_number: 44,
+            symbol_roman: ['I', 'V(sus4)', 'vi', 'V(sus4)'],
+            roots_intervals: [0, 7, 9, 7],
+            chord_types: [chord_Major, chord_Sus4, chord_Minor, chord_Sus4],
+            description_he: 'שימוש חוזר ב-sus4 ליצירת תחושה צפה ונוקשה פחות.'
+        },
+        {
+            sequence_number: 45,
+            symbol_roman: ['I', 'bVI', 'bVII', 'I'],
+            roots_intervals: [0, 8, 10, 0],
+            chord_types: [chord_Major, chord_Major, chord_Major, chord_Major],
+            description_he: 'מהלך רוק כבד המשתמש בדרגות מושאלות (bVI, bVII) ליצירת צליל גדול.'
+        },
+        {
+            sequence_number: 46,
+            symbol_roman: ['IV', 'iii', 'vi', 'ii'],
+            roots_intervals: [5, 4, 9, 2],
+            chord_types: [chord_Major, chord_Minor, chord_Minor, chord_Minor],
+            description_he: 'מהלך שקט ונינוח, מתקדם בשלישיות יורדות.'
+        },
+        {
+            sequence_number: 47,
+            symbol_roman: ['IV^7', 'V7', 'I^7', 'vi7'],
+            roots_intervals: [5, 7, 0, 9],
+            chord_types: [chord_Major7, chord_Dominant7, chord_Major7, chord_Minor7],
+            description_he: 'קדנצה IV-V-I ג׳אזית עם שימוש בדרגת vi7 ליצירת לולאה רציפה.'
+        },
+        {
+            sequence_number: 48,
+            symbol_roman: ['I', 'ii7', 'iii7', 'IV^7'],
+            roots_intervals: [0, 2, 4, 5],
+            chord_types: [chord_Major, chord_Minor7, chord_Minor7, chord_Major7],
+            description_he: 'מהלך עולה שלם בדרגות רצופות, משביעית מינור לשביעית מז׳ור.'
+        },
+        {
+            sequence_number: 49,
+            symbol_roman: ['vi', 'vii°', 'I', 'IV'],
+            roots_intervals: [9, 11, 0, 5],
+            chord_types: [chord_Minor, chord_Diminished, chord_Major, chord_Major],
+            description_he: 'מעבר מתוח מ-vi באמצעות הדימינישד (vii°) ליצירת פתרון חזק לטוניקה.'
+        },
+        {
+            sequence_number: 50,
+            symbol_roman: ['ii7', 'I/iii', 'IV^7', 'V7'],
+            roots_intervals: [2, 4, 5, 7],
+            chord_types: [chord_Minor7, chord_Major, chord_Major7, chord_Dominant7],
+            description_he: 'מהלך מורכב הכולל אקורד חילוף (Slash Chord) ליצירת תנועת באס רציפה.'
+        },
     ];
 
+    // --- chord_progressions_min.js (מלא) ---
+    // מרווחי השורשים (Roots) הדיאטוניים בסולם מינור טבעי: i=0, ii°=2, III=3, iv=5, v=7, VI=8, VII=10
+    // דרגות מושאלות (Harmonic Minor): V=7 (Major), vii°=11 (Diminished)
     const ALL_PROGRESSIONS_MINOR = [
+        // === קבוצה 1: קל (הכי נפוץ, משולשים בלבד) ===
         {
             sequence_number: 1,
             symbol_roman: ['i', 'iv', 'v', 'i'],
@@ -596,7 +952,7 @@
             symbol_roman: ['i', 'iv', 'VII', 'III'],
             roots_intervals: [0, 5, 10, 3],
             chord_types: [chord_Minor, chord_Minor, chord_Major, chord_Major],
-            description_he: 'מהלך שקט ומלודי, עובר בין דרגות מינוריות למז\'וריות.'
+            description_he: 'מהלך שקט ומלודי, עובר בין דרגות מינוריות למז׳וריות.'
         },
         {
             sequence_number: 4,
@@ -611,36 +967,360 @@
             roots_intervals: [0, 8, 3, 10],
             chord_types: [chord_Minor, chord_Major, chord_Major, chord_Major],
             description_he: 'מהלך המשתמש בדרגה III כטוניקה יחסית.'
-        }
+        },
+        {
+            sequence_number: 6,
+            symbol_roman: ['i', 'iv', 'VI', 'III'],
+            roots_intervals: [0, 5, 8, 3],
+            chord_types: [chord_Minor, chord_Minor, chord_Major, chord_Major],
+            description_he: 'רצף חלק המוביל מדרגה iv לדרגה היחסית III.'
+        },
+        {
+            sequence_number: 7,
+            symbol_roman: ['i', 'VII', 'VI', 'V'],
+            roots_intervals: [0, 10, 8, 7],
+            chord_types: [chord_Minor, chord_Major, chord_Major, chord_Major],
+            description_he: 'מהלך פופולרי במוזיקת מטאל/רוק המשתמש בדרגות VII-VI-V.'
+        },
+        {
+            sequence_number: 8,
+            symbol_roman: ['iv', 'VII', 'III', 'VI'],
+            roots_intervals: [5, 10, 3, 8],
+            chord_types: [chord_Minor, chord_Major, chord_Major, chord_Major],
+            description_he: 'מהלך מחזורי (loop) של דרגות מז׳וריות בתוך סולם מינורי.'
+        },
+        {
+            sequence_number: 9,
+            symbol_roman: ['i', 'III', 'VII', 'IV'],
+            roots_intervals: [0, 3, 10, 5],
+            chord_types: [chord_Minor, chord_Major, chord_Major, chord_Major],
+            description_he: 'מהלך אקורדים המדגיש את הדרגה IV המז׳ורית.'
+        },
+        {
+            sequence_number: 10,
+            symbol_roman: ['ii°', 'V', 'i'],
+            roots_intervals: [2, 7, 0],
+            chord_types: [chord_Diminished, chord_Major, chord_Minor],
+            description_he: 'קדנצה מינורית חזקה (ii° - V - i) באמצעות הדומיננט המז׳ורי (מהרמוני מינור).'
+        },
+        // === קבוצה 2: בינוני (שביעיות ודומיננטים משניים) ===
+        {
+            sequence_number: 11,
+            symbol_roman: ['i', 'V7', 'i'],
+            roots_intervals: [0, 7, 0],
+            chord_types: [chord_Minor, chord_Dominant7, chord_Minor],
+            description_he: 'קדנצה מינורית מושלמת וחזקה באמצעות V7.'
+        },
+        {
+            sequence_number: 12,
+            symbol_roman: ['i', 'VImaj7', 'iiø7', 'V7'],
+            roots_intervals: [0, 8, 2, 7],
+            chord_types: [chord_Minor, chord_Major7, chord_HalfDiminished, chord_Dominant7],
+            description_he: 'קדנצה ii-V-i ג׳אזית במינור, מודרנית וצבעונית.'
+        },
+        {
+            sequence_number: 13,
+            symbol_roman: ['i', 'iv', 'v7', 'i'],
+            roots_intervals: [0, 5, 7, 0],
+            chord_types: [chord_Minor, chord_Minor, chord_Minor7, chord_Minor],
+            description_he: 'מהלך המשתמש בדרגה v7 (מינור 7) ליצירת תנועה רכה יותר.'
+        },
+        {
+            sequence_number: 14,
+            symbol_roman: ['III^7', 'VI^7', 'iiø7', 'V7'],
+            roots_intervals: [3, 8, 2, 7],
+            chord_types: [chord_Major7, chord_Major7, chord_HalfDiminished, chord_Dominant7],
+            description_he: 'מעגל קווינטות חלקי המתחיל בטוניקה היחסית, נפוץ בבוסה נובה.'
+        },
+        {
+            sequence_number: 15,
+            symbol_roman: ['i', 'IV7/i', 'iv', 'V7'],
+            roots_intervals: [0, 5, 5, 7],
+            chord_types: [chord_Minor, chord_Dominant7, chord_Minor, chord_Dominant7],
+            description_he: 'שימוש ב-IV7 כדומיננט משני המושאל (IV7) ליצירת צבע בלוזי.'
+        },
+        {
+            sequence_number: 16,
+            symbol_roman: ['iiø7', 'V7', 'i'],
+            roots_intervals: [2, 7, 0],
+            chord_types: [chord_HalfDiminished, chord_Dominant7, chord_Minor],
+            description_he: 'קדנצת iiø7-V7-i, גרסת המינור הקלאסית ל-ii-V-I.'
+        },
+        {
+            sequence_number: 17,
+            symbol_roman: ['i', 'IV/i', 'iv', 'i'],
+            roots_intervals: [0, 5, 5, 0],
+            chord_types: [chord_Minor, chord_Major, chord_Minor, chord_Minor],
+            description_he: 'מעבר פלאגלי (iv-i) שמנוקד באקורד IV מז׳ור מושאל (IV/i).'
+        },
+        {
+            sequence_number: 18,
+            symbol_roman: ['i', 'i/VII', 'i/VI', 'V'],
+            roots_intervals: [0, 10, 8, 7],
+            chord_types: [chord_Minor, chord_Minor, chord_Minor, chord_Major],
+            description_he: 'מהלך יורד (Descending) עם חילופי בס, דרמטי מאוד.'
+        },
+        {
+            sequence_number: 19,
+            symbol_roman: ['i', 'v', 'VI', 'V'],
+            roots_intervals: [0, 7, 8, 7],
+            chord_types: [chord_Minor, chord_Minor, chord_Major, chord_Major],
+            description_he: 'מהלך היוצר מתח על הדרגה V המז׳ורית לפני חזרה ל-i.'
+        },
+        {
+            sequence_number: 20,
+            symbol_roman: ['VII', 'i', 'iv', 'VII'],
+            roots_intervals: [10, 0, 5, 10],
+            chord_types: [chord_Major, chord_Minor, chord_Minor, chord_Major],
+            description_he: 'מהלך רוק רפטטיבי המתחיל בדרגה השביעית.'
+        },
+        // === קבוצה 3: מתקדם (הרמוני, מלודי, דימינישד) ===
+        {
+            sequence_number: 21,
+            symbol_roman: ['i', 'v(aug)', 'VI', 'IV'],
+            roots_intervals: [0, 7, 8, 5],
+            chord_types: [chord_Minor, chord_Augmented, chord_Major, chord_Major],
+            description_he: 'שימוש ב-v מוגדל (מהרמוני מינור) ליצירת צליל מזרחי.'
+        },
+        {
+            sequence_number: 22,
+            symbol_roman: ['i', 'iv', 'V7', 'i'],
+            roots_intervals: [0, 5, 7, 0],
+            chord_types: [chord_Minor, chord_Minor, chord_Dominant7, chord_Minor],
+            description_he: 'קדנצה מלאה במינור הרמוני (i-iv-V7-i).'
+        },
+        {
+            sequence_number: 23,
+            symbol_roman: ['iiø7', 'V7/III', 'III^7'],
+            roots_intervals: [2, 10, 3],
+            chord_types: [chord_HalfDiminished, chord_Dominant7, chord_Major7],
+            description_he: 'קדנצה ii-V-I שמובילה לטוניקה היחסית (III) באמצעות דומיננט משני.'
+        },
+        {
+            sequence_number: 24,
+            symbol_roman: ['i', 'vii°7', 'i'],
+            roots_intervals: [0, 11, 0],
+            chord_types: [chord_Minor, chord_Diminished, chord_Minor],
+            description_he: 'שימוש ב-vii°7 (דימינישד) בתוך סולם מינורי, יוצר מתח דרמטי חזק.'
+        },
+        {
+            sequence_number: 25,
+            symbol_roman: ['i', 'VI', 'III', 'iiø7'],
+            roots_intervals: [0, 8, 3, 2],
+            chord_types: [chord_Minor, chord_Major, chord_Major, chord_HalfDiminished],
+            description_he: 'מהלך יציב המכין ל-iiø7 מתוח לפני חזרה אפשרית ל-V7.'
+        },
+        {
+            sequence_number: 26,
+            symbol_roman: ['i', 'V7/iv', 'iv', 'V7'],
+            roots_intervals: [0, 9, 5, 7],
+            chord_types: [chord_Minor, chord_Dominant7, chord_Minor, chord_Dominant7],
+            description_he: 'שימוש בדומיננט משני (V7 של iv) ליצירת תנועה חזקה לדרגה iv.'
+        },
+        {
+            sequence_number: 27,
+            symbol_roman: ['i', 'iv', 'V7', 'VI'],
+            roots_intervals: [0, 5, 7, 8],
+            chord_types: [chord_Minor, chord_Minor, chord_Dominant7, chord_Major],
+            description_he: 'קדנצה הטעיה (Deceptive Cadence) ל-VI במקום ל-i.'
+        },
+        {
+            sequence_number: 28,
+            symbol_roman: ['iv', 'i/III', 'VI', 'V'],
+            roots_intervals: [5, 3, 8, 7],
+            chord_types: [chord_Minor, chord_Minor, chord_Major, chord_Major],
+            description_he: 'חילוף בס מתוח ל-III מז׳ור לפני מעבר ל-VI.'
+        },
+        {
+            sequence_number: 29,
+            symbol_roman: ['iiø7', 'III^7', 'V7', 'i'],
+            roots_intervals: [2, 3, 7, 0],
+            chord_types: [chord_HalfDiminished, chord_Major7, chord_Dominant7, chord_Minor],
+            description_he: 'רצף מודרני המשתמש ב-III^7 כדי לעבור בצורה חלקה לקדנצה V7.'
+        },
+        {
+            sequence_number: 30,
+            symbol_roman: ['i', 'iv', 'i/V', 'V7'],
+            roots_intervals: [0, 5, 7, 7],
+            chord_types: [chord_Minor, chord_Minor, chord_Minor, chord_Dominant7],
+            description_he: 'הקדנצה i-iv עם בס V שמחזקת את ה-V7 הדומיננטי.'
+        },
+        // === קבוצה 4: מודרני (פופ/R&B מינורי) ===
+        {
+            sequence_number: 31,
+            symbol_roman: ['i', 'bVII', 'bVI', 'i'],
+            roots_intervals: [0, 10, 8, 0],
+            chord_types: [chord_Minor, chord_Major, chord_Major, chord_Minor],
+            description_he: 'מהלך אופייני ל-R&B ופופ מודרני, עם דרגות מושאלות (bVII, bVI).'
+        },
+        {
+            sequence_number: 32,
+            symbol_roman: ['iv', 'bVII', 'III', 'VI'],
+            roots_intervals: [5, 10, 3, 8],
+            chord_types: [chord_Minor, chord_Major, chord_Major, chord_Major],
+            description_he: 'מהלך מחזורי של אקורדים מז׳וריים ומינוריים המתקדם ברביעיות/קווינטות.'
+        },
+        {
+            sequence_number: 33,
+            symbol_roman: ['i', 'v', 'VI', 'VII'],
+            roots_intervals: [0, 7, 8, 10],
+            chord_types: [chord_Minor, chord_Minor, chord_Major, chord_Major],
+            description_he: 'מהלך שיכול להתאים למוזיקה קלאסית או פולק.'
+        },
+        {
+            sequence_number: 34,
+            symbol_roman: ['i', 'III^7', 'VI^7', 'iiø7'],
+            roots_intervals: [0, 3, 8, 2],
+            chord_types: [chord_Minor, chord_Major7, chord_Major7, chord_HalfDiminished],
+            description_he: 'רצף שביעיות ג׳אזי במינור.'
+        },
+        {
+            sequence_number: 35,
+            symbol_roman: ['i', 'VII', 'iv', 'i'],
+            roots_intervals: [0, 10, 5, 0],
+            chord_types: [chord_Minor, chord_Major, chord_Minor, chord_Minor],
+            description_he: 'מהלך בסיסי וקל עם תנועה פשוטה.'
+        },
+        {
+            sequence_number: 36,
+            symbol_roman: ['v', 'i', 'III', 'VII'],
+            roots_intervals: [7, 0, 3, 10],
+            chord_types: [chord_Minor, chord_Minor, chord_Major, chord_Major],
+            description_he: 'מהלך שמתחיל בדרגה v ויוצר תחושת תנועה חזקה לטוניקה.'
+        },
+        {
+            sequence_number: 37,
+            symbol_roman: ['i', 'i/VII', 'VI', 'V'],
+            roots_intervals: [0, 10, 8, 7],
+            chord_types: [chord_Minor, chord_Minor, chord_Major, chord_Major],
+            description_he: 'שימוש בבס יורד כרומטי (i, i/VII, VI) ליצירת תנועה דרמטית.'
+        },
+        {
+            sequence_number: 38,
+            symbol_roman: ['III^7', 'VII7', 'i7'],
+            roots_intervals: [3, 10, 0],
+            chord_types: [chord_Major7, chord_Dominant7, chord_Minor7],
+            description_he: 'קדנצה ג׳אזית עם אקורד מוחלף VII7 שמוביל לטוניקה מינורית.'
+        },
+        {
+            sequence_number: 39,
+            symbol_roman: ['i', 'iiø7', 'III^7', 'iv7'],
+            roots_intervals: [0, 2, 3, 5],
+            chord_types: [chord_Minor, chord_HalfDiminished, chord_Major7, chord_Minor7],
+            description_he: 'מהלך עולה שמוביל מ-i ל-iv7 באמצעות אקורדים מתוחים.'
+        },
+        {
+            sequence_number: 40,
+            symbol_roman: ['i', 'v', 'VI', 'III'],
+            roots_intervals: [0, 7, 8, 3],
+            chord_types: [chord_Minor, chord_Minor, chord_Major, chord_Major],
+            description_he: 'מהלך רך המשתמש ב-III כטוניקה יחסית זמנית.'
+        },
+        // === קבוצה 5: ג'אז ופיוז'ן מינורי ===
+        {
+            sequence_number: 41,
+            symbol_roman: ['i7', 'iv7', 'VII7', 'III^7'],
+            roots_intervals: [0, 5, 10, 3],
+            chord_types: [chord_Minor7, chord_Minor7, chord_Dominant7, chord_Major7],
+            description_he: 'רצף שביעיות מחזורי, נפוץ בסגנונות לטיניים וג׳אז מינורי.'
+        },
+        {
+            sequence_number: 42,
+            symbol_roman: ['iiø7', 'V7', 'i', 'V7/III'],
+            roots_intervals: [2, 7, 0, 10],
+            chord_types: [chord_HalfDiminished, chord_Dominant7, chord_Minor, chord_Dominant7],
+            description_he: 'שימוש בדומיננט משני (V7 של III) כהכנה לטוניקה היחסית.'
+        },
+        {
+            sequence_number: 43,
+            symbol_roman: ['i', 'VI', 'II7', 'V7'],
+            roots_intervals: [0, 8, 2, 7],
+            chord_types: [chord_Minor, chord_Major, chord_Dominant7, chord_Dominant7],
+            description_he: 'שימוש ב-II7 (דומיננט משני של V) ליצירת מתח חזק לפני ה-V7.'
+        },
+        {
+            sequence_number: 44,
+            symbol_roman: ['i', 'i(aug)', 'iv', 'VII'],
+            roots_intervals: [0, 0, 5, 10],
+            chord_types: [chord_Minor, chord_Augmented, chord_Minor, chord_Major],
+            description_he: 'מעבר כרומטי על הטוניקה (i ל-iAug) כדי ליצור תנועה חדה ל-iv.'
+        },
+        {
+            sequence_number: 45,
+            symbol_roman: ['III^7', 'i7', 'VI^7', 'iv7'],
+            roots_intervals: [3, 0, 8, 5],
+            chord_types: [chord_Major7, chord_Minor7, chord_Major7, chord_Minor7],
+            description_he: 'מהלך עגול עם שביעיות מז׳ור ומינור, נשמע נינוח ומלודי.'
+        },
+        {
+            sequence_number: 46,
+            symbol_roman: ['i', 'iiø7', 'III^7', 'V7'],
+            roots_intervals: [0, 2, 3, 7],
+            chord_types: [chord_Minor, chord_HalfDiminished, chord_Major7, chord_Dominant7],
+            description_he: 'רצף הרמוני מעניין המשלב סוגי אקורדים שונים לקראת קדנצה.'
+        },
+        {
+            sequence_number: 47,
+            symbol_roman: ['i', 'v7', 'iiø7', 'V7'],
+            roots_intervals: [0, 7, 2, 7],
+            chord_types: [chord_Minor, chord_Minor7, chord_HalfDiminished, chord_Dominant7],
+            description_he: 'שימוש ב-v7 כהקדמה ל-iiø7-V7, יוצר מעגל קווינטות רחב.'
+        },
+        {
+            sequence_number: 48,
+            symbol_roman: ['i', 'iv', 'VI/bVII', 'VII'],
+            roots_intervals: [0, 5, 10, 10],
+            chord_types: [chord_Minor, chord_Minor, chord_Major, chord_Major],
+            description_he: 'מהלך מודרני המשתמש באקורד חילוף (Slash Chord) ליצירת תנועת בס מעניינת.'
+        },
+        {
+            sequence_number: 49,
+            symbol_roman: ['iiø7', 'VII7/III', 'III^7'],
+            roots_intervals: [2, 11, 3],
+            chord_types: [chord_HalfDiminished, chord_Dominant7, chord_Major7],
+            description_he: 'שימוש ב-VII7 של III ככרומטיזם ליצירת מעבר חלק ל-III^7.'
+        },
+        {
+            sequence_number: 50,
+            symbol_roman: ['i', 'iv', 'VII', 'V'],
+            roots_intervals: [0, 5, 10, 7],
+            chord_types: [chord_Minor, chord_Minor, chord_Major, chord_Major],
+            description_he: 'מהלך מינורי יציב ומתוח, נפוץ במוזיקה קלאסית ובת-זמננו.'
+        },
     ];
 
-    let selectedRoot = null;
-    let selectedAccidental = 'none';
-    let selectedQuality = 'major';
+    // =========================================================================================
+    // 3. משתנים גלובליים ומצב האפליקציה + פונקציות עזר
+    // =========================================================================================
+    let selectedRoot = null; // C, D, E, F, G, A, B
+    let selectedAccidental = 'none'; // sharp, flat, none
+    let selectedQuality = 'major'; // major, minor
     let currentProgressionIndex = 0;
-    let progressionData = ALL_PROGRESSIONS_MAJOR;
+    let progressionData = ALL_PROGRESSIONS_MAJOR; // יטען את המערך הרלוונטי
 
     // משתני MIDI
     let isMidiMode = false;
     let midiAccess = null;
-    let currentStepIndex = 0;
-    let currentProgressionTargets = [];
-    let notesPlayedInCurrentStep = new Set();
-    let previousChordNotes = [];
-    let lastChordFinishTime = 0;
-    let isInputBlocked = false;
+    let currentStepIndex = 0; // איזה אקורד במהלך אנחנו מנגנים כרגע
+    let currentProgressionTargets = []; // יחזיק את התווים (מספרים 0-11) של כל אקורד במהלך הנוכחי
+    let notesPlayedInCurrentStep = new Set(); // אלו תווים כבר נוגנו באקורד הנוכחי
+    let previousChordNotes = []; // תווים מהאקורד הקודם (למניעת שגיאות מעבר)
+    let lastChordFinishTime = 0; // מתי סיימנו את האקורד הקודם
+    let isInputBlocked = false; // לחסימת קלט בזמן מעבר בין מהלכים
 
     function findNoteByDistance(halfToneDistance) {
         const normalizedDistance = (halfToneDistance % 12 + 12) % 12;
         return ALL_NOTES_ARRAY[normalizedDistance];
     }
 
+    // פונקציה לבניית סולם עם כתיב נכון (דיאז/במול)
     function getScaleNotes(rootNote, scaleObject, accidentalPreference) {
         const notes = [];
         const rootDistance = rootNote.half_tone_distance;
 
         let isFlatPreference = accidentalPreference === 'flat';
         if (accidentalPreference === 'none') {
+            // הכלל הפשוט: אם השורש הוא F, יש במול. אם השורש הוא B בסולם מינור, יש במול.
             isFlatPreference = (rootNote.name_en_primary === 'F' && scaleObject === scale_Major) || 
                                 (rootNote.name_en_primary === 'B' && scaleObject === scale_Minor);
         }
@@ -652,9 +1332,11 @@
             const displayedNote = { distance: currentDistance, name_en: '', name_he: '' };
 
             if (currentDistance === 0 || currentDistance === 2 || currentDistance === 4 || currentDistance === 5 || currentDistance === 7 || currentDistance === 9 || currentDistance === 11) {
+                // תו טבעי
                 displayedNote.name_en = noteObj.name_en_primary;
                 displayedNote.name_he = noteObj.name_he_primary;
             } else {
+                // תו שחור (דיאז/במול)
                 if (isFlatPreference) {
                     displayedNote.name_en = noteObj.name_en_alternate;
                     displayedNote.name_he = noteObj.name_he_alternate;
@@ -668,10 +1350,12 @@
         return notes;
     }
 
+    // פונקציה לבניית אקורד
     function getChordNotes(rootNote, chordType) {
         const notes = [];
         const rootDistance = rootNote.half_tone_distance;
         
+        // קביעת העדפת כתיב פשוטה: אם השורש הוא במול או דיאז, נשתמש בזה.
         const isFlatPreference = rootNote.name_en_alternate !== rootNote.name_en_primary && rootNote.name_en_alternate.includes('♭');
 
         for (const interval of chordType.intervals) {
@@ -703,6 +1387,10 @@
         document.getElementById(screenId).style.display = 'block';
     }
 
+    // =========================================================================================
+    // 4. לוגיקת מסך הבית (בחירת סולם)
+    // =========================================================================================
+
     function updateSelection(type, value) {
         if (type === 'note') selectedRoot = value;
         if (type === 'accidental') selectedAccidental = value;
@@ -723,7 +1411,7 @@
         const isValid = selectedRoot !== null;
         document.getElementById('practice-scale-btn').disabled = !isValid;
         document.getElementById('practice-chords-btn').disabled = !isValid;
-        document.getElementById('practice-midi-btn').disabled = !isValid;
+        document.getElementById('practice-midi-btn').disabled = !isValid; // <--- הוסף שורה זו
     }
 
     function selectRandomScale() {
@@ -737,6 +1425,7 @@
         updateSelection('quality', qualities[Math.floor(Math.random() * qualities.length)]);
     }
     
+    // הגדרת מאזינים לכפתורי הבחירה
     document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.note-buttons button').forEach(btn => {
             btn.addEventListener('click', (e) => updateSelection('note', e.target.dataset.note));
@@ -748,11 +1437,16 @@
             btn.addEventListener('click', (e) => updateSelection('quality', e.target.dataset.quality));
         });
         
+        // בחירת ברירת מחדל
         if (selectedRoot === null) {
             updateSelection('note', 'C');
         }
         validateSelectionAndEnableButtons();
     });
+
+    // =========================================================================================
+    // 5. לוגיקת תרגול סולם
+    // =========================================================================================
 
     function startScalePractice() {
         const rootDistance = BASE_NOTE_DISTANCES[selectedRoot];
@@ -769,6 +1463,7 @@
 
         const rootNoteObject = findNoteByDistance(finalDistance);
         
+        // בניית שם הסולם
         let displayedRootName = selectedRoot;
         if (selectedAccidental === 'sharp') displayedRootName += '♯';
         if (selectedAccidental === 'flat') displayedRootName += '♭';
@@ -778,6 +1473,7 @@
 
         const scaleObject = selectedQuality === 'major' ? scale_Major : scale_Minor;
         
+        // 1. תצוגת מרווחים בין תו לתו
         const intervalsContainer = document.getElementById('scale-intervals-container');
         intervalsContainer.innerHTML = '';
         scaleObject.step_intervals_he.forEach((interval) => {
@@ -787,6 +1483,7 @@
             intervalsContainer.appendChild(intervalEl);
         });
 
+        // 2. איפוס ושמירת נתונים לתצוגת התווים
         const notesContainer = document.getElementById('scale-notes-container');
         notesContainer.innerHTML = '';
         notesContainer.dataset.rootDistance = rootNoteObject.half_tone_distance;
@@ -801,7 +1498,7 @@
     function showScaleNotes() {
         const notesContainer = document.getElementById('scale-notes-container');
         
-        if (notesContainer.innerHTML !== '') return;
+        if (notesContainer.innerHTML !== '') return; // אם התווים כבר מוצגים
         
         const rootDistance = parseInt(notesContainer.dataset.rootDistance);
         const accidentalPreference = notesContainer.dataset.accidentalPreference;
@@ -825,6 +1522,12 @@
         document.getElementById('notes-label').style.display = 'block';
     }
 
+
+    // =========================================================================================
+    // 6. לוגיקת תרגול מהלכי אקורדים + MIDI Logic
+    // =========================================================================================
+
+    // פונקציה שמתחילה את התרגול במצב MIDI
     function startMidiPractice() {
         if (!navigator.requestMIDIAccess) {
             alert("הדפדפן שלך לא תומך ב-MIDI. אנא נסה בכרום או בדפדפן מודרני אחר.");
@@ -841,7 +1544,7 @@
             }
             
             isMidiMode = true;
-            startChordPractice();
+            startChordPractice(); // משתמשים באותה לוגיקת תצוגה, אבל הדגלים השתנו
         }
 
         function onMIDIFailure() {
@@ -849,52 +1552,67 @@
         }
     }
 
+    // הליבה: טיפול בהודעות MIDI
     function handleMidiMessage(event) {
+        // אם אנחנו לא במצב MIDI, או שהקלט חסום (בין תרגילים), או שזה שלב "הכר את הסולם" (-1)
         if (!isMidiMode || isInputBlocked || currentProgressionIndex === -1) return;
 
         const command = event.data[0];
         const noteRaw = event.data[1];
         const velocity = (event.data.length > 2) ? event.data[2] : 0;
 
-        if ((command & 0xF0) === 0x90 && velocity > 0) {
-            const normalizedNote = noteRaw % 12;
+        // התייחסות רק ל-Note On (קוד 144) ורק אם העוצמה גדולה מ-0
+        if (command === 144 && velocity > 0) {
+            const normalizedNote = noteRaw % 12; // נירמול לאוקטבה אחת (0-11)
             checkNoteLogic(normalizedNote);
         }
     }
 
     function checkNoteLogic(note) {
+        // קבלת תווי המטרה של האקורד הנוכחי
         const targetNotes = currentProgressionTargets[currentStepIndex]; 
         if (!targetNotes) return;
 
+        // 1. האם התו המנוגן הוא חלק מהאקורד הנוכחי?
         if (targetNotes.includes(note)) {
             notesPlayedInCurrentStep.add(note);
             
+            // בדיקה אם השלמנו את כל התווים באקורד
             if (notesPlayedInCurrentStep.size === targetNotes.length) {
                 advanceToNextChord();
             }
-        } else {
+        } 
+        // 2. התו לא נכון. האם מותר לנגן אותו? (חוק ה-5 שניות מהאקורד הקודם)
+        else {
             const timeSinceLast = Date.now() - lastChordFinishTime;
             const isFromPrevChord = previousChordNotes.includes(note);
 
             if (isFromPrevChord && timeSinceLast < 5000) {
+                // זה תו מהאקורד הקודם ועברו פחות מ-5 שניות -> התעלם
+                console.log("Ignoring bleed note from previous chord");
                 return;
             } else {
+                // טעות אמיתית!
                 handleMistake();
             }
         }
     }
 
     function advanceToNextChord() {
+        // שמירת היסטוריה למניעת טעויות במעבר
         previousChordNotes = currentProgressionTargets[currentStepIndex];
         lastChordFinishTime = Date.now();
         
+        // איפוס סט התווים לאקורד הבא
         notesPlayedInCurrentStep.clear();
         
         currentStepIndex++;
 
+        // האם סיימנו את המהלך?
         if (currentStepIndex >= currentProgressionTargets.length) {
             handleProgressionComplete();
         } else {
+            // עדכון התצוגה (הזזת ההדגשה)
             updateHighlight();
         }
     }
@@ -903,24 +1621,29 @@
         const toast = document.getElementById('error-toast');
         toast.classList.add('show');
         
+        // איפוס להתחלה
         currentStepIndex = 0;
         notesPlayedInCurrentStep.clear();
-        updateHighlight();
+        updateHighlight(); // מחזיר את ההדגשה להתחלה
 
+        // הסתרת ההודעה אחרי 2 שניות
         setTimeout(() => {
             toast.classList.remove('show');
         }, 2000);
     }
 
     function handleProgressionComplete() {
-        isInputBlocked = true;
+        isInputBlocked = true; // השבתת האזנה
+        
+        // כאן אפשר להוסיף אפקט ויזואלי קטן של הצלחה אם רוצים
         
         setTimeout(() => {
-            changeProgression(1);
-            isInputBlocked = false;
+            changeProgression(1); // מעבר למהלך הבא
+            isInputBlocked = false; // החזרת האזנה (הפונקציה displayCurrentProgression תאפס את המדדים)
         }, 5000);
     }
 
+    // פונקציה ויזואלית בלבד - מעבירה את ה-class 'current-target'
     function updateHighlight() {
         const steps = document.querySelectorAll('.progression-step');
         steps.forEach((step, index) => {
@@ -932,10 +1655,14 @@
         });
     }
 
+
     function startChordPractice() {
-        if (!isMidiMode && midiAccess) {
-            for (let input of midiAccess.inputs.values()) {
-                input.onmidimessage = null;
+        // בדיקה: אם הפונקציה נקראה מהכפתור הרגיל ולא מכפתור ה-MIDI, בטל מצב MIDI
+        if (event && event.target.id === 'practice-chords-btn') {
+            isMidiMode = false;
+            if (midiAccess) {
+                // אופציונלי: ניתוק מאזינים אם רוצים להיות יסודיים
+                for (let input of midiAccess.inputs.values()) input.onmidimessage = null;
             }
         }
 
@@ -950,12 +1677,14 @@
     }
 
     function changeProgression(step) {
-        const totalSteps = progressionData.length + 1;
+        const totalSteps = progressionData.length + 1; // +1 עבור שלב "הכר את הסולם"
         let newIndex = currentProgressionIndex + step;
 
         if (newIndex < -1) {
+            // אם היינו ב-1- ולחצנו "קודם", נעבור למהלך האחרון
             newIndex = progressionData.length - 1;
         } else if (newIndex >= progressionData.length) {
+            // אם היינו במהלך האחרון ולחצנו "הבא", נחזור ל-1-
             newIndex = -1;
         }
 
@@ -966,10 +1695,12 @@
     function displayCurrentProgression() {
         if (progressionData.length === 0) return;
 
+        // === איפוס משתני MIDI למהלך החדש ===
         currentProgressionTargets = []; 
         currentStepIndex = 0;
         notesPlayedInCurrentStep.clear();
-        previousChordNotes = [];
+        previousChordNotes = []; // איפוס זיכרון אקורד קודם במעבר לתרגיל חדש
+        // =================================
 
         const container = document.getElementById('current-progression-container');
         container.innerHTML = '';
@@ -982,7 +1713,6 @@
         } else if (selectedAccidental === 'flat') {
             finalDistance = (rootDistance - 1 + 12) % 12;
         }
-        const rootNoteObject = findNoteByDistance(finalDistance);
         
         let accidentalSymbol = '';
         if (selectedAccidental === 'sharp') accidentalSymbol = '♯';
@@ -991,14 +1721,11 @@
         const scaleName = `${selectedRoot}${accidentalSymbol} ${selectedQuality === 'major' ? scale_Major.name_he : scale_Minor.name_he}`;
         
         if (currentProgressionIndex === -1) {
-            
             document.getElementById('progression-title').textContent = `הכר את הסולם: ${scaleName}`;
-            document.getElementById('progression-description').textContent = 'אלו הן 7 דרגות הסולם הבסיסיות שעליהן נבנים האקורדים.';
-            
+            document.getElementById('progression-description').textContent = 'אלו הן 7 דרגות הסולם הבסיסיות שעליהן נבנים האקורדים (מצב MIDI אינו פעיל במסך זה).';
             document.querySelector('.toggle-switch-container').style.display = 'none';
 
             let degrees, intervals, types;
-
             if (selectedQuality === 'major') {
                 degrees = ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii°'];
                 intervals = [0, 2, 4, 5, 7, 9, 11];
@@ -1012,7 +1739,6 @@
             intervals.forEach((intervalFromRoot, index) => {
                 const chordType = types[index];
                 const romanSymbol = degrees[index];
-
                 const chordRootDistance = (finalDistance + intervalFromRoot) % 12;
                 const chordRootNote = findNoteByDistance(chordRootDistance);
                 
@@ -1020,37 +1746,26 @@
                 if (selectedAccidental === 'flat' && chordRootNote.name_en_alternate !== chordRootNote.name_en_primary) {
                     chordRootNameEn = chordRootNote.name_en_alternate;
                 }
-                
                 const chordName = chordRootNameEn + chordType.symbol_suffix;
 
                 const stepEl = document.createElement('div');
                 stepEl.className = 'progression-step';
-                stepEl.setAttribute('tabindex', 0);
-                stepEl.dataset.rootDistance = chordRootNote.half_tone_distance;
-                stepEl.dataset.chordType = chordType.symbol_suffix;
-                stepEl.dataset.roman = romanSymbol;
                 stepEl.dataset.fullChordName = chordName;
-                
                 stepEl.onclick = () => openChordModal(chordRootNote, chordType, romanSymbol, chordName);
 
-                stepEl.innerHTML = `
-                    <div class="roman-numeral">${romanSymbol}</div>
-                    <div class="chord-name">${chordName}</div>
-                `;
+                stepEl.innerHTML = `<div class="roman-numeral">${romanSymbol}</div><div class="chord-name">${chordName}</div>`;
                 container.appendChild(stepEl);
             });
 
         } else {
-            
             document.querySelector('.toggle-switch-container').style.display = 'flex';
-
             const progression = progressionData[currentProgressionIndex];
             
+            // הוספת חיווי בכותרת אם מצב MIDI פעיל
             const midiTitleSuffix = isMidiMode ? " (מצב MIDI פעיל 🎹)" : "";
             document.getElementById('progression-title').textContent = `מהלך ${progression.sequence_number} מתוך ${progressionData.length} בסולם ${scaleName}${midiTitleSuffix}`;
             
             document.getElementById('progression-description').textContent = progression.description_he;
-
             const shouldHideNames = document.getElementById('toggle-chord-names').checked;
 
             progression.roots_intervals.forEach((intervalFromRoot, index) => {
@@ -1060,10 +1775,14 @@
                 const chordRootDistance = (finalDistance + intervalFromRoot) % 12;
                 const chordRootNote = findNoteByDistance(chordRootDistance);
                 
+                // === לוגיקת MIDI: שמירת התווים המצופים ===
                 if (isMidiMode) {
+                    // חישוב תווי האקורד כרשימת מספרים (0-11)
+                    // נחשב ידנית את ה-distances כמו בתוך getChordNotes:
                     const expectedNotes = chordType.intervals.map(interval => (chordRootDistance + interval) % 12);
                     currentProgressionTargets.push(expectedNotes);
                 }
+                // ==========================================
 
                 let chordRootNameEn = chordRootNote.name_en_primary;
                 if (selectedAccidental === 'flat' && chordRootNote.name_en_alternate !== chordRootNote.name_en_primary) {
@@ -1077,15 +1796,15 @@
                 const stepEl = document.createElement('div');
                 stepEl.className = 'progression-step';
                 
+                // === סימון האקורד הראשון כפעיל אם במצב MIDI ===
                 if (isMidiMode && index === 0) {
                     stepEl.classList.add('current-target');
                 }
+                // ===============================================
 
                 stepEl.onclick = () => openChordModal(chordRootNote, chordType, romanSymbol, chordName);
 
-                const chordNameHTML = shouldHideNames ? 
-                    '' : 
-                    `<div class="chord-name">${chordName}</div>`;
+                const chordNameHTML = shouldHideNames ? '' : `<div class="chord-name">${chordName}</div>`;
 
                 stepEl.innerHTML = `
                     <div class="roman-numeral">${romanSymbol}</div>
@@ -1096,7 +1815,9 @@
         }
     }
 
+
     function openChordModal(rootNote, chordType, romanSymbol, fullChordName) {
+        // מחשב את תווי האקורד
         const notes = getChordNotes(rootNote, chordType);
         
         document.getElementById('modal-chord-title').textContent = `${fullChordName} (${romanSymbol}) - אקורד ${chordType.name_he}`;
@@ -1105,6 +1826,7 @@
         const notesDisplay = document.getElementById('modal-notes-display');
         notesDisplay.innerHTML = '';
 
+        // הצגת תווי האקורד (LTR)
         notes.forEach(note => {
             const noteEl = document.createElement('div');
             noteEl.className = 'modal-note';
