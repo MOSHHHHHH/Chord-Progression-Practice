@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>תרגול תיאוריה מוזיקלית</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #f59e0b;
+            --bg-color: #f9fafb;
+            --card-bg: #ffffff;
+            --text-color: #1f2937;
+            --border-radius-lg: 1rem;
+            --box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.2s ease-in-out;
+        }
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 800px;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            direction: rtl;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+        }
+
+        .controls-group, .note-buttons, .accidental-buttons, .quality-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        button {
+            background-color: var(--card-bg);
+            border: 2px solid #e5e7eb;
+            color: var(--text-color);
+            padding: 10px 15px;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: var(--transition);
+            min-width: 40px;
+        }
+
+        button:hover {
+            border-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        button.selected {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            box-shadow: 0 6px 10px rgba(59, 130, 246, 0.3);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .action-buttons button {
+            flex-grow: 1;
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: white;
+            font-size: 1.1rem;
+            padding: 12px 20px;
+        }
+
+        .action-buttons button:hover {
+            background-color: #f97316;
+            border-color: #f97316;
+        }
+
+        .accidental-buttons button {
+            min-width: 60px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .result-display {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: var(--border-radius-lg);
+            background-color: #fff;
+            direction: ltr;
+        }
+        
+        .result-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 10px;
+            min-width: 80px;
+            border: 2px solid var(--primary-color);
+            border-radius: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: var(--transition);
+            background-color: #eff6ff;
+        }
+        
+        .result-item:hover {
+            transform: scale(1.05);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .result-item .hebrew-name {
+            font-size: 0.9rem;
+            font-weight: normal;
+            margin-top: 5px;
+            color: #4b5563;
+        }
+
+        .progression-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 5px;
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 80px;
+        }
+        
+        .progression-step:hover {
+            background-color: #f3f4f6;
+            border-radius: 0.75rem;
+        }
+        
+        .roman-numeral {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            letter-spacing: -1px;
+        }
+        
+        .chord-name {
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: var(--text-color);
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--box-shadow);
+            max-width: 450px;
+            width: 90%;
+            direction: rtl;
+            animation: fadeIn 0.3s;
+        }
+        
+        .modal-content h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .modal-notes-display {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            direction: ltr;
+            justify-content: center;
+        }
+        
+        .modal-note {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 0.5rem;
+            font-weight: bold;
+        }
+        
+        .modal-note .hebrew-name {
+            font-size: 0.8rem;
+            font-weight: normal;
+        }
+        
+        .modal-description {
+            background-color: #f3f4f6;
+            padding: 15px;
+            border-radius: 0.5rem;
+            line-height: 1.6;
+            text-align: right;
+            margin-bottom: 20px;
+        }
+        
+        .modal-close-button {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .scale-intervals-display {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+            direction: ltr;
+            flex-wrap: wrap;
+        }
+        
+        .interval-item {
+            padding: 8px 15px;
+            background-color: #fee2e2;
+            color: #dc2626;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            font-size: 0.9rem;
+            border: 1px solid #fca5a5;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .toggle-switch-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .toggle-switch-label {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* תוספות עבור מצב MIDI */
+        .progression-step.current-target {
+            border: 3px solid var(--secondary-color);
+            background-color: #fff7ed;
+            transform: scale(1.15);
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+            z-index: 10;
+        }
+
+        .error-toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #ef4444;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 10px 25px rgba(220, 38, 38, 0.5);
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .error-toast.show {
+            opacity: 1;
+        }
+
+        .midi-btn {
+            background-color: #8b5cf6 !important;
+            border-color: #8b5cf6 !important;
+        }
+        
+        .midi-btn:hover {
+            background-color: #7c3aed !important;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <h1>תרגול הרמוני</h1>
+        
+        <div id="home-screen" class="screen">
+            <h2 style="text-align: center; margin-bottom: 20px;">בחר סולם לתרגול</h2>
+
+            <div class="controls-group">
+                <div class="note-buttons">
+                    <p style="width: 100%; text-align: center; font-weight: bold; margin-bottom: 10px;">תו שורש</p>
+                    <button data-note="C">C (דו)</button>
+                    <button data-note="D">D (רה)</button>
+                    <button data-note="E">E (מי)</button>
+                    <button data-note="F">F (פה)</button>
+                    <button data-note="G">G (סול)</button>
+                    <button data-note="A">A (לה)</button>
+                    <button data-note="B">B (סי)</button>
+                </div>
+                
+                <div class="accidental-buttons">
+                    <p style="width: 100%; text-align: center; font-weight: bold; margin-bottom: 10px;">דיאז / במול</p>
+                    <button data-accidental="sharp">♯</button>
+                    <button data-accidental="none" class="selected">טבעי</button>
+                    <button data-accidental="flat">♭</button>
+                </div>
+                
+                <div class="quality-buttons">
+                    <p style="width: 100%; text-align: center; font-weight: bold; margin-bottom: 10px;">סוג סולם</p>
+                    <button data-quality="major" class="selected">מז'ור</button>
+                    <button data-quality="minor">מינור</button>
+                </div>
+            </div>
+
+            <div class="action-buttons controls-group" style="margin-top: 30px;">
+                <button onclick="selectRandomScale()">אקראי</button>
+                <button id="practice-scale-btn" onclick="startScalePractice()" disabled>תרגול סולם</button>
+                <button id="practice-chords-btn" onclick="startChordPractice()" disabled>תרגול מהלכי אקורדים</button>
+                <button id="practice-midi-btn" class="midi-btn" onclick="startMidiPractice()" disabled>תרגל עם MIDI 🎹</button>
+            </div>
+        </div>
+
+        <div id="scale-practice-screen" class="screen" style="display: none;">
+            <h2 id="scale-title" style="text-align: center; margin-bottom: 20px; color: var(--secondary-color);"></h2>
+            
+            <p style="text-align: center; font-weight: 500;">מרווחים בין תו לתו (LTR):</p>
+            <div id="scale-intervals-container" class="scale-intervals-display">
+            </div>
+
+            <div class="controls-group" style="margin-top: 30px; justify-content: center;">
+                <button id="show-notes-btn" onclick="showScaleNotes()">הצג את התווים</button>
+            </div>
+
+            <p style="text-align: center; font-weight: 500; margin-top: 20px; display: none;" id="notes-label">תווי הסולם (LTR):</p>
+            <div id="scale-notes-container" class="result-display">
+            </div>
+
+            <div class="controls-group" style="margin-top: 40px;">
+                <button onclick="switchScreen('home-screen')">חזור לבית</button>
+            </div>
+        </div>
+
+        <div id="progression-practice-screen" class="screen" style="display: none;">
+            <h2 id="progression-title" style="text-align: center; margin-bottom: 30px; color: var(--secondary-color);"></h2>
+
+            <div class="toggle-switch-container">
+                <label for="toggle-chord-names" class="toggle-switch-label">הסתר שמות אקורדים</label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-chord-names" onchange="displayCurrentProgression()">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div id="current-progression-container" class="result-display" style="justify-content: space-around; min-height: 120px; flex-wrap: nowrap; overflow-x: auto;">
+            </div>
+            
+            <p id="progression-description" style="text-align: center; margin-top: 15px; font-style: italic; color: #4b5563;"></p>
+
+            <div class="controls-group" style="margin-top: 40px;">
+                <button onclick="changeProgression(-1)">קודם</button>
+                <button onclick="changeProgression(1)">הבא</button>
+            </div>
+            
+            <div class="controls-group">
+                <button onclick="switchScreen('home-screen')">חזור לדף הבית</button>
+            </div>
+        </div>
+        
+    </div>
+    
+    <div id="chord-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-chord-title"></h3>
+            
+            <p style="font-weight: bold; text-align: right; margin-bottom: 10px;">תווים מרכיבים (LTR):</p>
+            <div id="modal-notes-display" class="modal-notes-display">
+            </div>
+            
+            <p style="font-weight: bold; text-align: right; margin-bottom: 10px;">הסבר הרמוני:</p>
+            <div id="modal-description" class="modal-description">
+            </div>
+            
+            <button id="modal-close-button" class="modal-close-button" onclick="closeChordModal()">הבנתי</button>
+        </div>
+    </div>
+
+    <div id="error-toast" class="error-toast">טעות! חזרה להתחלה...</div>
+
+<script>
+    const note_C1 = { name_en_primary: 'C', name_en_alternate: 'C', name_he_primary: 'דו', name_he_alternate: 'דו', half_tone_distance: 0 };
+    const note_CSharp1 = { name_en_primary: 'C♯', name_en_alternate: 'D♭', name_he_primary: 'דו דיאז', name_he_alternate: 'רה במול', half_tone_distance: 1 };
+    const note_D1 = { name_en_primary: 'D', name_en_alternate: 'D', name_he_primary: 'רה', name_he_alternate: 'רה', half_tone_distance: 2 };
+    const note_DSharp1 = { name_en_primary: 'D♯', name_en_alternate: 'E♭', name_he_primary: 'רה דיאז', name_he_alternate: 'מי במול', half_tone_distance: 3 };
+    const note_E1 = { name_en_primary: 'E', name_en_alternate: 'E', name_he_primary: 'מי', name_he_alternate: 'מי', half_tone_distance: 4 };
+    const note_F1 = { name_en_primary: 'F', name_en_alternate: 'F', name_he_primary: 'פה', name_he_alternate: 'פה', half_tone_distance: 5 };
+    const note_FSharp1 = { name_en_primary: 'F♯', name_en_alternate: 'G♭', name_he_primary: 'פה דיאז', name_he_alternate: 'סול במול', half_tone_distance: 6 };
+    const note_G1 = { name_en_primary: 'G', name_en_alternate: 'G', name_he_primary: 'סול', name_he_alternate: 'סול', half_tone_distance: 7 };
+    const note_GSharp1 = { name_en_primary: 'G♯', name_en_alternate: 'A♭', name_he_primary: 'סול דיאז', name_he_alternate: 'לה במול', half_tone_distance: 8 };
+    const note_A1 = { name_en_primary: 'A', name_en_alternate: 'A', name_he_primary: 'לה', name_he_alternate: 'לה', half_tone_distance: 9 };
+    const note_ASharp1 = { name_en_primary: 'A♯', name_en_alternate: 'B♭', name_he_primary: 'לה דיאז', name_he_alternate: 'סי במול', half_tone_distance: 10 };
+    const note_B1 = { name_en_primary: 'B', name_en_alternate: 'B', name_he_primary: 'סי', name_he_alternate: 'סי', half_tone_distance: 11 };
+    
+    const ALL_NOTES_ARRAY = [
+        note_C1, note_CSharp1, note_D1, note_DSharp1, note_E1, note_F1,
+        note_FSharp1, note_G1, note_GSharp1, note_A1, note_ASharp1, note_B1
+    ].sort((a, b) => a.half_tone_distance - b.half_tone_distance);
+    const BASE_NOTE_DISTANCES = { 'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11 };
+
+    const chord_Major = { name_he: 'מז\'ור', name_en: 'Major', symbol_suffix: '', description_he: 'האקורד הבסיסי, מורכב מפרימה, טרצה גדולה (4 חצאי טונים) וקווינטה זכה (7 חצאי טונים).', intervals: [0, 4, 7] };
+    const chord_Minor = { name_he: 'מינור', name_en: 'Minor', symbol_suffix: 'm', description_he: 'אקורד בעל אופי נוגה, מורכב מפרימה, טרצה קטנה (3 חצאי טונים) וקווינטה זכה.', intervals: [0, 3, 7] };
+    const chord_Dominant7 = { name_he: 'דומיננט 7', name_en: 'Dominant 7th', symbol_suffix: '7', description_he: 'אקורד עם מתח חזק (טריטון), רוצה להיפתר לטוניקה. מורכב מטרצה גדולה, קווינטה זכה ושביעית קטנה (10 חצאי טונים).', intervals: [0, 4, 7, 10] };
+    const chord_Major7 = { name_he: 'מז\'ור 7', name_en: 'Major 7th', symbol_suffix: 'maj7', description_he: 'אקורד יציב ורך, עם שביעית גדולה (11 חצאי טונים).', intervals: [0, 4, 7, 11] };
+    const chord_Minor7 = { name_he: 'מינור 7', name_en: 'Minor 7th', symbol_suffix: 'm7', description_he: 'אקורד רגוע ונינוח, משמש רבות בג\'אז ובפיוז\'ן, עם טרצה קטנה ושביעית קטנה.', intervals: [0, 3, 7, 10] };
+    const chord_HalfDiminished = { name_he: 'מינור 7b5', name_en: 'Minor 7th flat 5 (Half-Diminished)', symbol_suffix: 'm7b5', description_he: 'אקורד מורכב עם מתח חזק, משמש בעיקר במוזיקת ג\'אז, עם קווינטה מוקטנת (6 חצאי טונים).', intervals: [0, 3, 6, 10] };
+    const chord_Augmented = { name_he: 'מוגדל', name_en: 'Augmented', symbol_suffix: 'aug', description_he: 'אקורד עם תחושה חלומית או מתוחה, עם קווינטה מוגדלת (8 חצאי טונים).', intervals: [0, 4, 8] };
+    const chord_Diminished = { name_he: 'מוקטן', name_en: 'Diminished', symbol_suffix: 'dim', description_he: 'אקורד לא יציב ודרמטי, עם טרצה קטנה וקווינטה מוקטנת.', intervals: [0, 3, 6] };
+    const chord_Sus4 = { name_he: 'סאס 4', name_en: 'Suspended 4th', symbol_suffix: 'sus4', description_he: 'אקורד ללא טרצה, במקומה יש קוורטה (5 חצאי טונים), יוצר תחושת המתנה.', intervals: [0, 5, 7] };
+    const chord_Sus2 = { name_he: 'סאס 2', name_en: 'Suspended 2nd', symbol_suffix: 'sus2', description_he: 'אקורד ללא טרצה, במקומה יש סקונדה גדולה (2 חצאי טונים), יוצר תחושת פתיחות.', intervals: [0, 2, 7] };
+    const ALL_CHORDS_MAP = { 'Major': chord_Major, 'Minor': chord_Minor, 'Dominant7': chord_Dominant7, 'Major7': chord_Major7, 'Minor7': chord_Minor7, 'HalfDiminished': chord_HalfDiminished, 'Augmented': chord_Augmented, 'Diminished': chord_Diminished, 'Sus4': chord_Sus4, 'Sus2': chord_Sus2 };
+
+    const scale_Major = {
+        name_he: 'מז\'ור',
+        name_en: 'Major',
+        description_he: 'סולם משמח ובהיר, אבן הבניין הבסיסית של המוזיקה המערבית.',
+        intervals: [0, 2, 4, 5, 7, 9, 11],
+        step_intervals_he: ['טון', 'טון', 'חצי טון', 'טון', 'טון', 'טון', 'חצי טון']
+    };
+
+    const scale_Minor = {
+        name_he: 'מינור טבעי',
+        name_en: 'Natural Minor',
+        description_he: 'סולם בעל אופי נוגה ומלנכולי, יחסי לסולם המז\'ור (היחסי).',
+        intervals: [0, 2, 3, 5, 7, 8, 10],
+        step_intervals_he: ['טון', 'חצי טון', 'טון', 'טון', 'חצי טון', 'טון', 'טון']
+    };
+
+    const ALL_PROGRESSIONS_MAJOR = [
+        {
+            sequence_number: 1,
+            symbol_roman: ['I', 'IV', 'V', 'I'],
+            roots_intervals: [0, 5, 7, 0],
+            chord_types: [chord_Major, chord_Major, chord_Major, chord_Major],
+            description_he: 'מהלך הפופ והרוק הבסיסי ביותר, בעל תחושת סיום חזקה (קדנצה מושלמת).'
+        },
+        {
+            sequence_number: 2,
+            symbol_roman: ['I', 'vi', 'IV', 'V'],
+            roots_intervals: [0, 9, 5, 7],
+            chord_types: [chord_Major, chord_Minor, chord_Major, chord_Major],
+            description_he: 'מהלך "הקדנצה הפכפכה", נפוץ מאוד בשירי פופ, יוצר תחושה של המשכיות.'
+        },
+        {
+            sequence_number: 3,
+            symbol_roman: ['ii', 'V', 'I'],
+            roots_intervals: [2, 7, 0],
+            chord_types: [chord_Minor, chord_Major, chord_Major],
+            description_he: 'קדנצה בסיסית בג\'אז ובמוזיקה קלאסית, מתחזקת את הטוניקה.'
+        },
+        {
+            sequence_number: 4,
+            symbol_roman: ['I', 'V', 'vi', 'IV'],
+            roots_intervals: [0, 7, 9, 5],
+            chord_types: [chord_Major, chord_Major, chord_Minor, chord_Major],
+            description_he: 'מהלך הפופ המפורסם ("4 אקורדים"), נשמע טוב בכל סגנון.'
+        },
+        {
+            sequence_number: 5,
+            symbol_roman: ['I', 'iii', 'vi', 'IV'],
+            roots_intervals: [0, 4, 9, 5],
+            chord_types: [chord_Major, chord_Minor, chord_Minor, chord_Major],
+            description_he: 'מהלך רגוע ומלודי, עובר דרך הדרגה השלישית המינורית.'
+        }
+    ];
+
+    const ALL_PROGRESSIONS_MINOR = [
+        {
+            sequence_number: 1,
+            symbol_roman: ['i', 'iv', 'v', 'i'],
+            roots_intervals: [0, 5, 7, 0],
+            chord_types: [chord_Minor, chord_Minor, chord_Minor, chord_Minor],
+            description_he: 'מהלך המינור הטבעי הבסיסי ביותר, בעל תחושה נוגה ומלנכולית.'
+        },
+        {
+            sequence_number: 2,
+            symbol_roman: ['i', 'VI', 'VII', 'i'],
+            roots_intervals: [0, 8, 10, 0],
+            chord_types: [chord_Minor, chord_Major, chord_Major, chord_Minor],
+            description_he: 'מהלך נפוץ ברוק ובמוזיקה עממית, יוצר תנועה חלקה כלפי מעלה ואחורה.'
+        },
+        {
+            sequence_number: 3,
+            symbol_roman: ['i', 'iv', 'VII', 'III'],
+            roots_intervals: [0, 5, 10, 3],
+            chord_types: [chord_Minor, chord_Minor, chord_Major, chord_Major],
+            description_he: 'מהלך שקט ומלודי, עובר בין דרגות מינוריות למז\'וריות.'
+        },
+        {
+            sequence_number: 4,
+            symbol_roman: ['i', 'v', 'VI', 'III'],
+            roots_intervals: [0, 7, 8, 3],
+            chord_types: [chord_Minor, chord_Minor, chord_Major, chord_Major],
+            description_he: 'מהלך רגוע, משתמש ב-v וב-VI כדי להגיע לטוניקה היחסית (III).'
+        },
+        {
+            sequence_number: 5,
+            symbol_roman: ['i', 'VI', 'III', 'VII'],
+            roots_intervals: [0, 8, 3, 10],
+            chord_types: [chord_Minor, chord_Major, chord_Major, chord_Major],
+            description_he: 'מהלך המשתמש בדרגה III כטוניקה יחסית.'
+        }
+    ];
+
+    let selectedRoot = null;
+    let selectedAccidental = 'none';
+    let selectedQuality = 'major';
+    let currentProgressionIndex = 0;
+    let progressionData = ALL_PROGRESSIONS_MAJOR;
+
+    // משתני MIDI
+    let isMidiMode = false;
+    let midiAccess = null;
+    let currentStepIndex = 0;
+    let currentProgressionTargets = [];
+    let notesPlayedInCurrentStep = new Set();
+    let previousChordNotes = [];
+    let lastChordFinishTime = 0;
+    let isInputBlocked = false;
+
+    function findNoteByDistance(halfToneDistance) {
+        const normalizedDistance = (halfToneDistance % 12 + 12) % 12;
+        return ALL_NOTES_ARRAY[normalizedDistance];
+    }
+
+    function getScaleNotes(rootNote, scaleObject, accidentalPreference) {
+        const notes = [];
+        const rootDistance = rootNote.half_tone_distance;
+
+        let isFlatPreference = accidentalPreference === 'flat';
+        if (accidentalPreference === 'none') {
+            isFlatPreference = (rootNote.name_en_primary === 'F' && scaleObject === scale_Major) || 
+                                (rootNote.name_en_primary === 'B' && scaleObject === scale_Minor);
+        }
+        
+        for (const interval of scaleObject.intervals) {
+            const currentDistance = (rootDistance + interval) % 12;
+            const noteObj = findNoteByDistance(currentDistance);
+
+            const displayedNote = { distance: currentDistance, name_en: '', name_he: '' };
+
+            if (currentDistance === 0 || currentDistance === 2 || currentDistance === 4 || currentDistance === 5 || currentDistance === 7 || currentDistance === 9 || currentDistance === 11) {
+                displayedNote.name_en = noteObj.name_en_primary;
+                displayedNote.name_he = noteObj.name_he_primary;
+            } else {
+                if (isFlatPreference) {
+                    displayedNote.name_en = noteObj.name_en_alternate;
+                    displayedNote.name_he = noteObj.name_he_alternate;
+                } else {
+                    displayedNote.name_en = noteObj.name_en_primary;
+                    displayedNote.name_he = noteObj.name_he_primary;
+                }
+            }
+            notes.push(displayedNote);
+        }
+        return notes;
+    }
+
+    function getChordNotes(rootNote, chordType) {
+        const notes = [];
+        const rootDistance = rootNote.half_tone_distance;
+        
+        const isFlatPreference = rootNote.name_en_alternate !== rootNote.name_en_primary && rootNote.name_en_alternate.includes('♭');
+
+        for (const interval of chordType.intervals) {
+            const currentDistance = (rootDistance + interval) % 12;
+            const noteObj = findNoteByDistance(currentDistance);
+            
+            const noteData = {};
+            if (noteObj.name_en_primary === noteObj.name_en_alternate) {
+                noteData.name_en = noteObj.name_en_primary;
+                noteData.name_he = noteObj.name_he_primary;
+            } else {
+                if (isFlatPreference) {
+                    noteData.name_en = noteObj.name_en_alternate;
+                    noteData.name_he = noteObj.name_he_alternate;
+                } else {
+                    noteData.name_en = noteObj.name_en_primary;
+                    noteData.name_he = noteObj.name_he_primary;
+                }
+            }
+            notes.push(noteData);
+        }
+        return notes;
+    }
+
+    function switchScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(screen => {
+            screen.style.display = 'none';
+        });
+        document.getElementById(screenId).style.display = 'block';
+    }
+
+    function updateSelection(type, value) {
+        if (type === 'note') selectedRoot = value;
+        if (type === 'accidental') selectedAccidental = value;
+        if (type === 'quality') selectedQuality = value;
+
+        document.querySelectorAll(`.${type}-buttons button`).forEach(btn => {
+            btn.classList.remove('selected');
+        });
+        const selector = type === 'note' ? `[data-note="${value}"]` :
+                         type === 'accidental' ? `[data-accidental="${value}"]` :
+                         `[data-quality="${value}"]`;
+        document.querySelector(selector).classList.add('selected');
+
+        validateSelectionAndEnableButtons();
+    }
+
+    function validateSelectionAndEnableButtons() {
+        const isValid = selectedRoot !== null;
+        document.getElementById('practice-scale-btn').disabled = !isValid;
+        document.getElementById('practice-chords-btn').disabled = !isValid;
+        document.getElementById('practice-midi-btn').disabled = !isValid;
+    }
+
+    function selectRandomScale() {
+        const rootNotes = Object.keys(BASE_NOTE_DISTANCES);
+        updateSelection('note', rootNotes[Math.floor(Math.random() * rootNotes.length)]);
+        
+        const accidentals = ['none', 'sharp', 'flat'];
+        updateSelection('accidental', accidentals[Math.floor(Math.random() * accidentals.length)]);
+        
+        const qualities = ['major', 'minor'];
+        updateSelection('quality', qualities[Math.floor(Math.random() * qualities.length)]);
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.note-buttons button').forEach(btn => {
+            btn.addEventListener('click', (e) => updateSelection('note', e.target.dataset.note));
+        });
+        document.querySelectorAll('.accidental-buttons button').forEach(btn => {
+            btn.addEventListener('click', (e) => updateSelection('accidental', e.target.dataset.accidental));
+        });
+        document.querySelectorAll('.quality-buttons button').forEach(btn => {
+            btn.addEventListener('click', (e) => updateSelection('quality', e.target.dataset.quality));
+        });
+        
+        if (selectedRoot === null) {
+            updateSelection('note', 'C');
+        }
+        validateSelectionAndEnableButtons();
+    });
+
+    function startScalePractice() {
+        const rootDistance = BASE_NOTE_DISTANCES[selectedRoot];
+        let finalDistance = rootDistance;
+        let accidentalSymbol = '';
+
+        if (selectedAccidental === 'sharp') {
+            finalDistance = (rootDistance + 1) % 12;
+            accidentalSymbol = '♯';
+        } else if (selectedAccidental === 'flat') {
+            finalDistance = (rootDistance - 1 + 12) % 12;
+            accidentalSymbol = '♭';
+        }
+
+        const rootNoteObject = findNoteByDistance(finalDistance);
+        
+        let displayedRootName = selectedRoot;
+        if (selectedAccidental === 'sharp') displayedRootName += '♯';
+        if (selectedAccidental === 'flat') displayedRootName += '♭';
+
+        const scaleName = `${displayedRootName} ${selectedQuality === 'major' ? scale_Major.name_he : scale_Minor.name_he}`;
+        document.getElementById('scale-title').textContent = scaleName;
+
+        const scaleObject = selectedQuality === 'major' ? scale_Major : scale_Minor;
+        
+        const intervalsContainer = document.getElementById('scale-intervals-container');
+        intervalsContainer.innerHTML = '';
+        scaleObject.step_intervals_he.forEach((interval) => {
+            const intervalEl = document.createElement('div');
+            intervalEl.className = 'interval-item';
+            intervalEl.textContent = interval;
+            intervalsContainer.appendChild(intervalEl);
+        });
+
+        const notesContainer = document.getElementById('scale-notes-container');
+        notesContainer.innerHTML = '';
+        notesContainer.dataset.rootDistance = rootNoteObject.half_tone_distance;
+        notesContainer.dataset.accidentalPreference = selectedAccidental;
+        notesContainer.dataset.quality = selectedQuality;
+        
+        document.getElementById('notes-label').style.display = 'none';
+
+        switchScreen('scale-practice-screen');
+    }
+
+    function showScaleNotes() {
+        const notesContainer = document.getElementById('scale-notes-container');
+        
+        if (notesContainer.innerHTML !== '') return;
+        
+        const rootDistance = parseInt(notesContainer.dataset.rootDistance);
+        const accidentalPreference = notesContainer.dataset.accidentalPreference;
+        const quality = notesContainer.dataset.quality;
+
+        const scaleObject = quality === 'major' ? scale_Major : scale_Minor;
+        const rootNoteObject = findNoteByDistance(rootDistance);
+
+        const notes = getScaleNotes(rootNoteObject, scaleObject, accidentalPreference);
+
+        notes.forEach(note => {
+            const noteEl = document.createElement('div');
+            noteEl.className = 'result-item';
+            noteEl.innerHTML = `
+                ${note.name_en}
+                <span class="hebrew-name">${note.name_he}</span>
+            `;
+            notesContainer.appendChild(noteEl);
+        });
+
+        document.getElementById('notes-label').style.display = 'block';
+    }
+
+    function startMidiPractice() {
+        if (!navigator.requestMIDIAccess) {
+            alert("הדפדפן שלך לא תומך ב-MIDI. אנא נסה בכרום או בדפדפן מודרני אחר.");
+            return;
+        }
+
+        navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
+
+        function onMIDISuccess(access) {
+            midiAccess = access;
+            const inputs = midiAccess.inputs.values();
+            for (let input of inputs) {
+                input.onmidimessage = handleMidiMessage;
+            }
+            
+            isMidiMode = true;
+            startChordPractice();
+        }
+
+        function onMIDIFailure() {
+            alert("לא הצלחתי לגשת להתקן MIDI.");
+        }
+    }
+
+    function handleMidiMessage(event) {
+        if (!isMidiMode || isInputBlocked || currentProgressionIndex === -1) return;
+
+        const command = event.data[0];
+        const noteRaw = event.data[1];
+        const velocity = (event.data.length > 2) ? event.data[2] : 0;
+
+        if (command === 144 && velocity > 0) {
+            const normalizedNote = noteRaw % 12;
+            checkNoteLogic(normalizedNote);
+        }
+    }
+
+    function checkNoteLogic(note) {
+        const targetNotes = currentProgressionTargets[currentStepIndex]; 
+        if (!targetNotes) return;
+
+        if (targetNotes.includes(note)) {
+            notesPlayedInCurrentStep.add(note);
+            
+            if (notesPlayedInCurrentStep.size === targetNotes.length) {
+                advanceToNextChord();
+            }
+        } else {
+            const timeSinceLast = Date.now() - lastChordFinishTime;
+            const isFromPrevChord = previousChordNotes.includes(note);
+
+            if (isFromPrevChord && timeSinceLast < 5000) {
+                return;
+            } else {
+                handleMistake();
+            }
+        }
+    }
+
+    function advanceToNextChord() {
+        previousChordNotes = currentProgressionTargets[currentStepIndex];
+        lastChordFinishTime = Date.now();
+        
+        notesPlayedInCurrentStep.clear();
+        
+        currentStepIndex++;
+
+        if (currentStepIndex >= currentProgressionTargets.length) {
+            handleProgressionComplete();
+        } else {
+            updateHighlight();
+        }
+    }
+
+    function handleMistake() {
+        const toast = document.getElementById('error-toast');
+        toast.classList.add('show');
+        
+        currentStepIndex = 0;
+        notesPlayedInCurrentStep.clear();
+        updateHighlight();
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2000);
+    }
+
+    function handleProgressionComplete() {
+        isInputBlocked = true;
+        
+        setTimeout(() => {
+            changeProgression(1);
+            isInputBlocked = false;
+        }, 5000);
+    }
+
+    function updateHighlight() {
+        const steps = document.querySelectorAll('.progression-step');
+        steps.forEach((step, index) => {
+            if (index === currentStepIndex) {
+                step.classList.add('current-target');
+            } else {
+                step.classList.remove('current-target');
+            }
+        });
+    }
+
+    function startChordPractice() {
+        if (!isMidiMode && midiAccess) {
+            for (let input of midiAccess.inputs.values()) {
+                input.onmidimessage = null;
+            }
+        }
+
+        progressionData = selectedQuality === 'major' ? ALL_PROGRESSIONS_MAJOR : ALL_PROGRESSIONS_MINOR;
+        
+        currentProgressionIndex = -1; 
+        
+        document.getElementById('toggle-chord-names').checked = false;
+        
+        displayCurrentProgression();
+        switchScreen('progression-practice-screen');
+    }
+
+    function changeProgression(step) {
+        const totalSteps = progressionData.length + 1;
+        let newIndex = currentProgressionIndex + step;
+
+        if (newIndex < -1) {
+            newIndex = progressionData.length - 1;
+        } else if (newIndex >= progressionData.length) {
+            newIndex = -1;
+        }
+
+        currentProgressionIndex = newIndex;
+        displayCurrentProgression();
+    }
+
+    function displayCurrentProgression() {
+        if (progressionData.length === 0) return;
+
+        currentProgressionTargets = []; 
+        currentStepIndex = 0;
+        notesPlayedInCurrentStep.clear();
+        previousChordNotes = [];
+
+        const container = document.getElementById('current-progression-container');
+        container.innerHTML = '';
+        
+        const rootDistance = BASE_NOTE_DISTANCES[selectedRoot];
+        let finalDistance = rootDistance;
+        
+        if (selectedAccidental === 'sharp') {
+            finalDistance = (rootDistance + 1) % 12;
+        } else if (selectedAccidental === 'flat') {
+            finalDistance = (rootDistance - 1 + 12) % 12;
+        }
+        const rootNoteObject = findNoteByDistance(finalDistance);
+        
+        let accidentalSymbol = '';
+        if (selectedAccidental === 'sharp') accidentalSymbol = '♯';
+        if (selectedAccidental === 'flat') accidentalSymbol = '♭';
+
+        const scaleName = `${selectedRoot}${accidentalSymbol} ${selectedQuality === 'major' ? scale_Major.name_he : scale_Minor.name_he}`;
+        
+        if (currentProgressionIndex === -1) {
+            
+            document.getElementById('progression-title').textContent = `הכר את הסולם: ${scaleName}`;
+            document.getElementById('progression-description').textContent = 'אלו הן 7 דרגות הסולם הבסיסיות שעליהן נבנים האקורדים.';
+            
+            document.querySelector('.toggle-switch-container').style.display = 'none';
+
+            let degrees, intervals, types;
+
+            if (selectedQuality === 'major') {
+                degrees = ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii°'];
+                intervals = [0, 2, 4, 5, 7, 9, 11];
+                types = [chord_Major, chord_Minor, chord_Minor, chord_Major, chord_Major, chord_Minor, chord_Diminished];
+            } else {
+                degrees = ['i', 'ii°', 'III', 'iv', 'v', 'VI', 'VII'];
+                intervals = [0, 2, 3, 5, 7, 8, 10];
+                types = [chord_Minor, chord_Diminished, chord_Major, chord_Minor, chord_Minor, chord_Major, chord_Major];
+            }
+
+            intervals.forEach((intervalFromRoot, index) => {
+                const chordType = types[index];
+                const romanSymbol = degrees[index];
+
+                const chordRootDistance = (finalDistance + intervalFromRoot) % 12;
+                const chordRootNote = findNoteByDistance(chordRootDistance);
+                
+                let chordRootNameEn = chordRootNote.name_en_primary;
+                if (selectedAccidental === 'flat' && chordRootNote.name_en_alternate !== chordRootNote.name_en_primary) {
+                    chordRootNameEn = chordRootNote.name_en_alternate;
+                }
+                
+                const chordName = chordRootNameEn + chordType.symbol_suffix;
+
+                const stepEl = document.createElement('div');
+                stepEl.className = 'progression-step';
+                stepEl.setAttribute('tabindex', 0);
+                stepEl.dataset.rootDistance = chordRootNote.half_tone_distance;
+                stepEl.dataset.chordType = chordType.symbol_suffix;
+                stepEl.dataset.roman = romanSymbol;
+                stepEl.dataset.fullChordName = chordName;
+                
+                stepEl.onclick = () => openChordModal(chordRootNote, chordType, romanSymbol, chordName);
+
+                stepEl.innerHTML = `
+                    <div class="roman-numeral">${romanSymbol}</div>
+                    <div class="chord-name">${chordName}</div>
+                `;
+                container.appendChild(stepEl);
+            });
+
+        } else {
+            
+            document.querySelector('.toggle-switch-container').style.display = 'flex';
+
+            const progression = progressionData[currentProgressionIndex];
+            
+            const midiTitleSuffix = isMidiMode ? " (מצב MIDI פעיל 🎹)" : "";
+            document.getElementById('progression-title').textContent = `מהלך ${progression.sequence_number} מתוך ${progressionData.length} בסולם ${scaleName}${midiTitleSuffix}`;
+            
+            document.getElementById('progression-description').textContent = progression.description_he;
+
+            const shouldHideNames = document.getElementById('toggle-chord-names').checked;
+
+            progression.roots_intervals.forEach((intervalFromRoot, index) => {
+                const chordType = progression.chord_types[index];
+                const romanSymbol = progression.symbol_roman[index];
+
+                const chordRootDistance = (finalDistance + intervalFromRoot) % 12;
+                const chordRootNote = findNoteByDistance(chordRootDistance);
+                
+                if (isMidiMode) {
+                    const expectedNotes = chordType.intervals.map(interval => (chordRootDistance + interval) % 12);
+                    currentProgressionTargets.push(expectedNotes);
+                }
+
+                let chordRootNameEn = chordRootNote.name_en_primary;
+                if (selectedAccidental === 'flat' && chordRootNote.name_en_alternate !== chordRootNote.name_en_primary) {
+                    chordRootNameEn = chordRootNote.name_en_alternate;
+                } else if (selectedAccidental === 'sharp' && chordRootNote.name_en_primary.includes('♭')) {
+                    chordRootNameEn = chordRootNote.name_en_primary;
+                }
+                
+                const chordName = chordRootNameEn + chordType.symbol_suffix;
+
+                const stepEl = document.createElement('div');
+                stepEl.className = 'progression-step';
+                
+                if (isMidiMode && index === 0) {
+                    stepEl.classList.add('current-target');
+                }
+
+                stepEl.onclick = () => openChordModal(chordRootNote, chordType, romanSymbol, chordName);
+
+                const chordNameHTML = shouldHideNames ? 
+                    '' : 
+                    `<div class="chord-name">${chordName}</div>`;
+
+                stepEl.innerHTML = `
+                    <div class="roman-numeral">${romanSymbol}</div>
+                    ${chordNameHTML}
+                `;
+                container.appendChild(stepEl);
+            });
+        }
+    }
+
+    function openChordModal(rootNote, chordType, romanSymbol, fullChordName) {
+        const notes = getChordNotes(rootNote, chordType);
+        
+        document.getElementById('modal-chord-title').textContent = `${fullChordName} (${romanSymbol}) - אקורד ${chordType.name_he}`;
+        document.getElementById('modal-description').textContent = chordType.description_he;
+        
+        const notesDisplay = document.getElementById('modal-notes-display');
+        notesDisplay.innerHTML = '';
+
+        notes.forEach(note => {
+            const noteEl = document.createElement('div');
+            noteEl.className = 'modal-note';
+            noteEl.innerHTML = `
+                ${note.name_en}
+                <span class="hebrew-name">${note.name_he}</span>
+            `;
+            notesDisplay.appendChild(noteEl);
+        });
+
+        document.getElementById('chord-modal').classList.add('active');
+    }
+
+    function closeChordModal() {
+        document.getElementById('chord-modal').classList.remove('active');
+    }
+
+</script>
+</body>
+</html>
