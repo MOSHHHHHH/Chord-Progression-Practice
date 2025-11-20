@@ -856,7 +856,7 @@
         const noteRaw = event.data[1];
         const velocity = (event.data.length > 2) ? event.data[2] : 0;
 
-        if (command === 144 && velocity > 0) {
+        if ((command & 0xF0) === 0x90 && velocity > 0) {
             const normalizedNote = noteRaw % 12;
             checkNoteLogic(normalizedNote);
         }
