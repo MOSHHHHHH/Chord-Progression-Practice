@@ -1631,18 +1631,27 @@
             toast.classList.remove('show');
         }, 2000);
     }
-
-    function handleProgressionComplete() {
-        isInputBlocked = true; // השבתת האזנה
-        
-        // כאן אפשר להוסיף אפקט ויזואלי קטן של הצלחה אם רוצים
-        
-        setTimeout(() => {
-            changeProgression(1); // מעבר למהלך הבא
-            isInputBlocked = false; // החזרת האזנה (הפונקציה displayCurrentProgression תאפס את המדדים)
-        }, 5000);
-    }
-
+function handleProgressionComplete() {
+    isInputBlocked = true; // השבתת האזנה זמנית
+    
+    // הצגת הודעת הצלחה ויזואלית
+    const toast = document.getElementById('error-toast');
+    toast.textContent = 'מצוין! השלמת את המהלך בהצלחה! ðŸŽ‰';
+    toast.style.backgroundColor = '#10b981'; // ירוק במקום אדום
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+        toast.textContent = 'טעות! חזרה להתחלה...'; // החזרת הטקסט המקורי
+        toast.style.backgroundColor = '#ef4444'; // החזרת הצבע האדום
+        isInputBlocked = false; // החזרת האזנה - המשתמש יכול להמשיך לתרגל את אותו מהלך
+    }, 3000);
+    
+    // הסרת ההדגשה מכל האקורדים
+    document.querySelectorAll('.progression-step').forEach(step => {
+        step.classList.remove('current-target');
+    });
+}
     // פונקציה ויזואלית בלבד - מעבירה את ה-class 'current-target'
     function updateHighlight() {
         const steps = document.querySelectorAll('.progression-step');
